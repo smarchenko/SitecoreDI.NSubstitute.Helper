@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<project name="utils" xmlns="http://schemas.sitecore.net/nant/buildscript">
+  <property name="global.paths.self" value="${directory::get-parent-directory(project::get-buildfile-path())}"/>
+  <property name="global.paths.root" value="${directory::get-parent-directory(global.paths.self)}" unless="${property::exists('global.paths.root')}"/>
+  <property name="global.paths.root" value="${path::get-full-path(global.paths.root)}"/>
+  <property name="global.paths.nuget" value="${global.paths.self}\.nuget"/>
+  <property name="global.paths.code" value="${global.paths.root}\code"/>
+  <property name="global.paths.output" value="${global.paths.root}\output"/>
+  <property name="global.paths.temp" value="${path::get-temp-path()}"/>
+  <property name="global.paths.nuget.exe" value="${global.paths.temp}\NuGet.exe" />
+
+  <mkdir dir="${global.paths.nuget}" unless="${directory::exists(global.paths.nuget)}"/>
+
+  <if test="${not file::exists(global.paths.nuget.exe)}">
+    <property name="global.paths.nuget.exe" value="${global.paths.self}\.nuget\nuget.exe"/>
+    <get src="https://nuget.org/nuget.exe" dest="${global.paths.nuget.exe}" unless="${file::exists(global.paths.nuget.exe)}"/>
+  </if>
+
+
+  <target name="autobuild">
+    <call target="compile" />
+    <call target="generate.nuget.package"/>
+  </target>
+
+  <target name="compile">
+    <property name="compile.configuration" value="Release"/>
+    <property name="compile.target" value="Build"/>
+    <property name="compile.msbuild.exe" value="C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"/>
+    <property name="compile.command.line" value='"${global.paths.code}\Sitecore.NSubstitute.sln" /t:${compile.target} /p:Configuration=${compile.configuration}'/>
+    
+    <exec program="${compile.msbuild.exe}" commandline="${compile.command.line}"/>
+  </target>
+
+  <target name="generate.nuget.package">
+    <mkdir dir="${global.paths.output}" unless="${directory::exists(global.paths.output)}"/>
+    <property name="nuget.nuspec" value="${global.paths.self}\nuspec\SitecoreDI.NSubstiture.nuspec"/>
+    <property name="nuget.command.line" value='pack "${nuget.nuspec}" -BasePath "${global.paths.root}" -OutputDirectory "${global.paths.output}"'/>
+    <exec program="${global.paths.nuget.exe}" commandline='${nuget.command.line}'/>
+  </target>
+</project>
