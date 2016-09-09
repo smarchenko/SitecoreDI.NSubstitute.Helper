@@ -208,7 +208,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fakes.cs" />
+    <Compile Include="FakeUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -46,6 +46,14 @@
       <HintPath>..\packages\Sitecore.CMS.Core.API.10.0.0.103\lib\net452\FacebookAPI.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentAssertions, Version=4.10.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.10.0\lib\net45\FluentAssertions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentAssertions.Core, Version=4.10.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.10.0\lib\net45\FluentAssertions.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Google.Apis, Version=1.0.0.30541, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.CMS.Core.API.10.0.0.103\lib\net452\Google.Apis.dll</HintPath>
       <Private>True</Private>
@@ -212,10 +220,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FakeUtilTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sitecore.NSubstitute\Sitecore.NSubstitute.csproj">
+      <Project>{755f5087-9953-4d59-83fb-59b29053e4bd}</Project>
+      <Name>Sitecore.NSubstitute</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
