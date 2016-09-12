@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using System.IO;
+using NSubstitute;
 using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
@@ -37,23 +38,49 @@ namespace Sitecore.NSubstitute
 
     #endregion FakeDatabase
 
-    public static Item FakeFieldValue(string name, string value, Item fakeItem)
+    #region FakeItem
+
+    public static Item FakeItem(ID itemId, string name, Database fakeDatabase)
     {
-      var field = Substitute.For<Field>(ID.NewID, fakeItem);
-      field.Value.Returns(value);
-      fakeItem.Fields[name].Returns(field);
-      return fakeItem;
+      var item = Substitute.For<Item>(itemId, ItemData.Empty, fakeDatabase);
+      item.Name.Returns(name);
+      return item;
+    }
+
+    public static Item FakeItem(string name, Database fakeDatabase)
+    {
+      return FakeItem(ID.NewID, name, fakeDatabase);
+    }
+
+    public static Item FakeItem(Database fakeDatabase)
+    {
+      return FakeItem("fakeItem", fakeDatabase);
+    }
+
+    public static Item FakeItem(string name)
+    {
+      return FakeItem(name, FakeUtil.FakeDatabase());
+    }
+
+    public static Item FakeItem()
+    {
+      return FakeItem("fakeItem");
+    }
+
+    #endregion FakeItem
+
+    #region FakeFields
+
+    public static Field FakeField(ID id, Item fakeItem)
+    {
+      var field = Substitute.For<Field>(id, fakeItem);
+      field.Database.Returns(fakeItem.Database);
+      return field;
     }
 
     public static Field FakeField(Item fakeItem)
     {
       return FakeField(Substitute.For<ID>(), fakeItem);
-    }
-
-    public static Field FakeField(ID id, Item fakeItem)
-    {
-      var field = Substitute.For<Field>(id, fakeItem);
-      return field;
     }
 
     public static Item FakeItemFields(Item fakeItem)
@@ -63,32 +90,26 @@ namespace Sitecore.NSubstitute
       return fakeItem;
     }
 
-    public static Item FakeItem()
+    public static Item FakeFieldValue(string name, string value, Item fakeItem)
     {
-      return FakeItem("fakeItem", FakeUtil.FakeDatabase());
+      return FakeFieldValue(ID.NewID, name, value, fakeItem);
     }
 
-    public static Item FakeItem(string name)
+    public static Item FakeFieldValue(ID id, string name, string value, Item fakeItem)
     {
-      return FakeItem(name, FakeUtil.FakeDatabase());
+      if (fakeItem.Fields == null)
+      {
+        throw new InvalidDataException("Item field collection has not been substitute. Please use FakeItemFields before faking specific field.");
+      }
+
+      var field = Substitute.For<Field>(id, fakeItem);
+      field.Value.Returns(value);
+      fakeItem.Fields[name].Returns(field);
+      fakeItem.Fields[id].Returns(field);
+      return fakeItem;
     }
 
-    public static Item FakeItem(Database fakeDatabase)
-    {
-      return FakeItem("fakeItem", fakeDatabase);
-    }
-
-    public static Item FakeItem(string name, Database fakeDatabase)
-    {
-      return FakeItem(ID.NewID, name, fakeDatabase);
-    }
-
-    public static Item FakeItem(ID itemId, string name, Database fakeDatabase)
-    {
-      var item = Substitute.For<Item>(itemId, ItemData.Empty, fakeDatabase);
-      item.Name.Returns(name);
-      return item;
-    }
+    #endregion FakeFields
 
     public static Item FakeItemPath(Item fakeItem)
     {
@@ -112,6 +133,13 @@ namespace Sitecore.NSubstitute
     public static ItemUri FakeItemUri(ID id, string path, Language language, Version version, string databaseName)
     {
       return Substitute.For<ItemUri>(id, path, language, version, databaseName);
+    }
+
+    public static Item FakeItemUri(Item fakeItem)
+    {
+      var uri = Substitute.For<ItemUri>(fakeItem.ID, fakeItem.ID.ToString(), fakeItem.Language ?? Language.Invariant, fakeItem.Version ?? Version.Latest, fakeItem.Database.Name);
+      fakeItem.Uri.Returns(uri);
+      return fakeItem;
     }
 
     public static DataUri FakeDataUri()
@@ -142,13 +170,6 @@ namespace Sitecore.NSubstitute
     {
       var templateItem = Substitute.For<TemplateItem>(fakeItem);
       fakeItem.Template.Returns(templateItem);
-      return fakeItem;
-    }
-
-    public static Item FakeItemUri(Item fakeItem)
-    {
-      var uri = Substitute.For<ItemUri>(ID.NewID.ToString(), Language.Invariant, Version.Latest, fakeItem.Database);
-      fakeItem.Uri.Returns(uri);
       return fakeItem;
     }
 
