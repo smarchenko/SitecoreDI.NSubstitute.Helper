@@ -310,5 +310,59 @@ namespace Sitecore.NSubstitute.UnitTests
       item.Template.Should().NotBeNull();
     }
 
+    [Test]
+    public void FakeItemLinks_ShouldFake_ItemLinks()
+    {
+      var item = FakeUtil.FakeItem();
+      item.Links.Should().BeNull();
+
+      FakeUtil.FakeItemLinks(item);
+
+      item.Links.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItemLocking_ShouldFake_ItemLocking()
+    {
+      var item = FakeUtil.FakeItem();
+      item.Locking.Should().BeNull();
+
+      FakeUtil.FakeItemLocking(item);
+
+      item.Locking.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItemVersions_ShouldFake_ItemVersions()
+    {
+      var item = FakeUtil.FakeItem();
+      item.Versions.Should().BeNull();
+
+      FakeUtil.FakeItemVersions(item);
+
+      item.Versions.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItemAxes_ShouldFake_ItemAxes()
+    {
+      var item = FakeUtil.FakeItem();
+      item.Axes.Should().BeNull();
+
+      FakeUtil.FakeItemAxes(item);
+
+      item.Axes.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItemEditing_ShouldFake_ItemEditing()
+    {
+      var item = FakeUtil.FakeItem();
+      item.Editing.Should().BeNull();
+
+      FakeUtil.FakeItemEditing(item);
+
+      item.Editing.Should().NotBeNull();
+    }
   }
 }
