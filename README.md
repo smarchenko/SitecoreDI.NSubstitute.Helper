@@ -6,7 +6,7 @@ If one builds the project using build scripts, he will be able to reference gene
 **Note**: the package does not reference Sitecore API nuget package so that it does not require Sitecore infrastructure. Please add references to Sitecore.Kernel file manually.
 
 Example for creating a fake item object:
-```
+```c#
     [Test]
     public void FakeItem_ShouldReturn_FakeItemWithSpecifiedParameters()
     {
@@ -34,7 +34,7 @@ The project also contains additional API that might be useful for testing the co
 If these optoions do not work for your solution, then you can try to use the FakeServiceProviderWrapper class that is designed to help in this case. However, you should remember that this solution must be temporary and code must be updated ASAP.
 
 Code below substitutes the default implementation of BaseItemManger with an own one that will be grabbed by static ItemManager class:
-```
+```c#
     [Test]
     public void SimleProviderWrapper_ShouldWork()
     {
