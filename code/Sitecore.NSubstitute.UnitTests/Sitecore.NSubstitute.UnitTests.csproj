@@ -137,6 +137,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FakeItemTester.cs" />
     <Compile Include="FakeServiveProviderTester.cs" />
     <Compile Include="FakeUtilTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -124,6 +124,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FakeItem.cs" />
     <Compile Include="FakeServiceProviderWrapper.cs" />
     <Compile Include="FakeUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
