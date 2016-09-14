@@ -55,7 +55,7 @@ Example:
     }
 ```
 
-More examples your can find here
+More examples your can find [here](https://github.com/smarchenko/SitecoreDI.NSubstitute.Helper/blob/master/code/Sitecore.NSubstitute.UnitTests/FakeItemTester.cs)
 
 ## Unittesting with static managers  
 The project also contains additional API that might be useful for testing the code, that has not been reworked, and still using static Sitecore managers.
