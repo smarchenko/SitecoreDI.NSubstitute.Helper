@@ -1,4 +1,5 @@
 # SitecoreDI.NSubstitute.Helper
+## Simple substitutes
 The reason for this project is to just show some hints to developers for how they can substitute some Sitecore classes.
 
 If one builds the project using build scripts, he will be able to reference generated nuget package with helper utils for further using it in own project.
@@ -26,7 +27,11 @@ Example for creating a fake item object:
 
 More examples for using helper methods you can find [here](https://github.com/smarchenko/SitecoreDI.NSubstitute.Helper/blob/master/code/Sitecore.NSubstitute.UnitTests/FakeUtilTester.cs)
 
+## Creating Item structures
 
+
+
+## Unittesting with static managers  
 The project also contains additional API that might be useful for testing the code, that has not been reworked, and still using static Sitecore managers.
 
 **Note**: it is strongly recommended not to use this API and update the code to use DI instead. If this is not possible, please consider to extract usages of Sitecore statics to a separate virtual methods, so that they can be substituted in pure Unit Tests using proxy classes. 

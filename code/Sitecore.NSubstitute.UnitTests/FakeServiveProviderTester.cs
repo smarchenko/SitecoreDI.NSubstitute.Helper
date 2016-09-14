@@ -26,7 +26,7 @@ namespace Sitecore.NSubstitute.UnitTests
         .Returns(
           Substitute.For<ProviderHelper<ItemProviderBase, ItemProviderCollection>>("/somepath"));
 
-      using (new FakeServiceProvider(fakeServiceProvider))
+      using (new FakeServiceProviderWrapper(fakeServiceProvider))
       {
         ItemManager.GetParent(item).Returns(item);
       }
@@ -59,7 +59,7 @@ namespace Sitecore.NSubstitute.UnitTests
         .Returns(
           Substitute.For<ProviderHelper<ItemProviderBase, ItemProviderCollection>>("/somepath"));
 
-      using (new FakeServiceProvider(fakeServiceProvider))
+      using (new FakeServiceProviderWrapper(fakeServiceProvider))
       {
         Sitecore.Data.Managers.ItemManager.GetParent(item).Returns(tmpItem1);
       }
@@ -69,13 +69,13 @@ namespace Sitecore.NSubstitute.UnitTests
         var a = Sitecore.Data.Managers.ItemManager.GetParent(item);
       });
 
-      using (new FakeServiceProvider(fakeServiceProvider))
+      using (new FakeServiceProviderWrapper(fakeServiceProvider))
       {
         Sitecore.Data.Managers.ItemManager.GetParent(item).Returns(tmpItem1);
       }
 
       fakeServiceProvider.GetService(typeof(BaseItemManager)).Returns(service2);
-      using (new FakeServiceProvider(fakeServiceProvider))
+      using (new FakeServiceProviderWrapper(fakeServiceProvider))
       {
         Sitecore.Data.Managers.ItemManager.GetParent(item).Returns(tmpItem2);
       }
