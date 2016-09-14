@@ -28,8 +28,34 @@ Example for creating a fake item object:
 More examples for using helper methods you can find [here](https://github.com/smarchenko/SitecoreDI.NSubstitute.Helper/blob/master/code/Sitecore.NSubstitute.UnitTests/FakeUtilTester.cs)
 
 ## Creating Item structures
+FakeItem class allows to initialize the item with the most useful properties easily. This class also allows to create item structures in a few lines of code.
 
+Example:
+```C#
+    [Test]
+    public void FakeItem_ShouldSimplify_StructureCreation()
+    {
+      var item = new FakeItem();
 
+      var parentID = ID.NewID;
+      var childID1 = ID.NewID;
+      var childID2 = ID.NewID;
+      var scItem = (Item)item;
+      item
+        .WithParent(new FakeItem(parentID))
+        .WithChild(new FakeItem(childID1, scItem.Database))
+        .WithChild(new FakeItem(childID2, scItem.Database));
+
+      scItem.ParentID.Should().Be(parentID);
+      scItem.Parent.ID.Should().Be(parentID);
+      scItem.Children.Count.Should().Be(2);
+
+      scItem.Database.GetItem(childID1).Should().NotBeNull();
+      scItem.Database.GetItem(childID1).ID.Should().Be(childID1);
+    }
+```
+
+More examples your can find here
 
 ## Unittesting with static managers  
 The project also contains additional API that might be useful for testing the code, that has not been reworked, and still using static Sitecore managers.

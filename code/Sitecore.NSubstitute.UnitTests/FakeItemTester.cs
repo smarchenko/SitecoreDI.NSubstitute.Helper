@@ -62,5 +62,27 @@ namespace Sitecore.NSubstitute.UnitTests
       scItem[id].Should().Be(value);
       scItem[name].Should().Be(value);
     }
+
+    [Test]
+    public void FakeItem_ShouldSimplify_StructureCreation()
+    {
+      var item = new FakeItem();
+
+      var parentID = ID.NewID;
+      var childID1 = ID.NewID;
+      var childID2 = ID.NewID;
+      var scItem = (Item)item;
+      item
+        .WithParent(new FakeItem(parentID))
+        .WithChild(new FakeItem(childID1, scItem.Database))
+        .WithChild(new FakeItem(childID2, scItem.Database));
+
+      scItem.ParentID.Should().Be(parentID);
+      scItem.Parent.ID.Should().Be(parentID);
+      scItem.Children.Count.Should().Be(2);
+
+      scItem.Database.GetItem(childID1).Should().NotBeNull();
+      scItem.Database.GetItem(childID1).ID.Should().Be(childID1);
+    }
   }
 }
