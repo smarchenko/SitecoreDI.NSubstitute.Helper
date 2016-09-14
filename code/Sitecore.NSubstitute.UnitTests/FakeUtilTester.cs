@@ -135,10 +135,25 @@ namespace Sitecore.NSubstitute.UnitTests
     public void FakeItemFields_ShouldReturn_FakeCollection()
     {
       var item = FakeUtil.FakeItem();
+      item.Fields.Should().BeNull();
 
       FakeUtil.FakeItemFields(item);
 
       item.Fields.Should().NotBeNull();
+      item.Fields.Should().BeAssignableTo<FieldCollection>();
+    }
+
+    [Test]
+    public void FakeItemFields_ShouldReturn_AllowsToFakeField()
+    { 
+      var item = FakeUtil.FakeItem();
+      item.Fields.Should().BeNull();
+
+      FakeUtil.FakeItemFields(item);
+
+      item.Fields.Should().NotBeNull();
+      var field = FakeUtil.FakeField(item);
+      item.Fields["some field"].Returns(field);
       item.Fields.Should().BeAssignableTo<FieldCollection>();
     }
 
