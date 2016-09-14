@@ -64,6 +64,40 @@ namespace Sitecore.NSubstitute.UnitTests
     }
 
     [Test]
+    public void FakeItem_ShouldInitializeField_ByIDValue()
+    {
+      var item = new FakeItem();
+      ID id = ID.NewID;
+      string value = "test value";
+
+      item.Add(id, value);
+
+      var scItem = (Item)item;
+
+      scItem.Fields[id].Should().NotBeNull();
+      scItem.Fields[id].Name.Should().Be(string.Empty);
+      scItem.Fields[id].Value.Should().Be(value);
+      scItem[id].Should().Be(value);
+    }
+
+    [Test]
+    public void FakeItem_ShouldInitializeField_ByNameValue()
+    {
+      var item = new FakeItem();
+      string name = "test field";
+      string value = "test value";
+
+      item.Add(name, value);
+
+      var scItem = (Item)item;
+
+      scItem.Fields[name].Should().NotBeNull();
+      scItem.Fields[name].ID.Should().NotBe(ID.Null);
+      scItem.Fields[name].ID.Should().NotBeNull();
+      scItem[name].Should().Be(value);
+    }
+
+    [Test]
     public void FakeItem_ShouldSimplify_StructureCreation()
     {
       var item = new FakeItem();
