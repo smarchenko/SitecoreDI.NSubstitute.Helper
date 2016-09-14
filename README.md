@@ -6,7 +6,7 @@ If one builds the project using build scripts, he will be able to reference gene
 **Note**: the package does not reference Sitecore API nuget package so that it does not require Sitecore infrastructure. Please add references to Sitecore.Kernel file manually.
 
 Example for creating a fake item object:
-```c#
+```C#
     [Test]
     public void FakeItem_ShouldReturn_FakeItemWithSpecifiedParameters()
     {
@@ -27,14 +27,14 @@ Example for creating a fake item object:
 More examples for using helper methods you can find [here](https://github.com/smarchenko/SitecoreDI.NSubstitute.Helper/blob/master/code/Sitecore.NSubstitute.UnitTests/FakeUtilTester.cs)
 
 
-The project also contains additional API that might be useful for testing the code, that has not been reworked, and still using staic Sitecore managegers.
+The project also contains additional API that might be useful for testing the code, that has not been reworked, and still using static Sitecore managers.
 
-**Note**: it is strongly recommended not to use this API and update the code to use DI instead. If this is not possible, please consider to extract usages of Siteocre statics to a separate virtual methods, so that they can be substituted in pure Unit Tests using proxy classes. 
+**Note**: it is strongly recommended not to use this API and update the code to use DI instead. If this is not possible, please consider to extract usages of Sitecore statics to a separate virtual methods, so that they can be substituted in pure Unit Tests using proxy classes. 
 
 If these optoions do not work for your solution, then you can try to use the FakeServiceProviderWrapper class that is designed to help in this case. However, you should remember that this solution must be temporary and code must be updated ASAP.
 
 Code below substitutes the default implementation of BaseItemManger with an own one that will be grabbed by static ItemManager class:
-```c#
+```C#
     [Test]
     public void SimleProviderWrapper_ShouldWork()
     {
