@@ -56,3 +56,4 @@ Code below substitutes the default implementation of BaseItemManger with an own 
     }
 ```
 
+**Note**: In case you find additional static managers that are not cleaned up by the wrapper, you can create own disposable wrapper and add your own cleanup logic. 
