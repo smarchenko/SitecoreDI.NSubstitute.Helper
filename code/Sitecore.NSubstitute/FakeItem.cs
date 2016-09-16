@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NSubstitute;
+﻿using NSubstitute;
 using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Engines;
@@ -14,7 +8,7 @@ using Sitecore.Data.Templates;
 
 namespace Sitecore.NSubstitute
 {
-  public class FakeItem : IEnumerable
+  public class FakeItem
   {
     private readonly ItemList childList = new ItemList();
 
@@ -47,9 +41,13 @@ namespace Sitecore.NSubstitute
       return fakeItem.Item;
     }
 
-    public IEnumerator GetEnumerator()
+    /// <summary>
+    /// Converts current instance to Sitecore item.
+    /// </summary>
+    /// <returns></returns>
+    public Item ToSitecoreItem()
     {
-      throw new NotImplementedException();
+      return this.Item;
     }
 
     public void Add(ID id, string name, string value)
@@ -86,7 +84,7 @@ namespace Sitecore.NSubstitute
 
       engines.TemplateEngine.Returns(templateEngine);
       this.Item.Database.Engines.Returns(engines);
-      this.Item.Database.GetTemplate(templateId).Returns(this.Item.Template);
+      this.Item.Database.GetTemplate(templateId).Returns(d => this.Item.Template);
 
       return this;
     }
@@ -97,6 +95,7 @@ namespace Sitecore.NSubstitute
       return this;
     }
 
+   
     public FakeItem WithChild(FakeItem child)
     {
       this.childList.Add(child);

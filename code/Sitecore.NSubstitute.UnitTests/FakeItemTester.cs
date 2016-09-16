@@ -118,5 +118,39 @@ namespace Sitecore.NSubstitute.UnitTests
       scItem.Database.GetItem(childID1).Should().NotBeNull();
       scItem.Database.GetItem(childID1).ID.Should().Be(childID1);
     }
+
+    [Test]
+    public void FakeItem_ShouldInitialize_Template()
+    {
+      var templateId = ID.NewID;
+      var item = new FakeItem().WithTemplate(templateId);
+
+      var scItem = (Item) item;
+      scItem.Template.Should().NotBeNull();
+      scItem.TemplateID.Should().Be(templateId);
+      scItem.Template.ID.Should().Be(templateId);
+      scItem.Database.GetTemplate(templateId).Should().NotBeNull();
+      scItem.Database.Engines.TemplateEngine.GetTemplate(templateId).Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldSet_ItemName()
+    {
+      var name = "my test item";
+      var item = new FakeItem()
+                          .WithName(name)
+                          .ToSitecoreItem();
+
+      item.Name.Should().Be(name);
+    }
+
+    [Test]
+    public void FakeItem_ShouldAdd_ChildItem()
+    {
+      var item = new FakeItem();
+      item.Add(new FakeItem());
+
+      item.ToSitecoreItem().Children.Count.Should().Be(1);
+    }
   }
 }
