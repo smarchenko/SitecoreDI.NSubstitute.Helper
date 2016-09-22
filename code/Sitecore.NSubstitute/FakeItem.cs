@@ -5,6 +5,7 @@ using Sitecore.Data.Engines;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Templates;
+using Sitecore.Security.AccessControl;
 
 namespace Sitecore.NSubstitute
 {
@@ -17,6 +18,7 @@ namespace Sitecore.NSubstitute
       this.Item = FakeUtil.FakeItem(id ?? ID.NewID, "fakeItem", database ?? FakeUtil.FakeDatabase());
       FakeUtil.FakeItemFields(this.Item);
       FakeUtil.FakeItemEditing(this.Item);
+      FakeUtil.FakeItemPath(this.Item);
       
       var templateItem = Substitute.For<TemplateItem>(this.Item);
       this.Item.Template.Returns(templateItem);
@@ -145,6 +147,19 @@ namespace Sitecore.NSubstitute
     public void Add(FakeItem child)
     {
       this.WithChild(child);
+    }
+
+    public FakeItem WithPath(string itemPath)
+    {
+      this.Item.Paths.FullPath.Returns(itemPath);
+      this.Item.Database.GetItem(itemPath).Returns(this.Item);
+      return this;
+    }
+
+    public FakeItem WithItemAccess()
+    {
+      FakeUtil.FakeItemAccess(this.Item);
+      return this;
     }
   }
 }

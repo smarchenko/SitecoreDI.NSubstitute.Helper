@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -152,5 +153,53 @@ namespace Sitecore.NSubstitute.UnitTests
 
       item.ToSitecoreItem().Children.Count.Should().Be(1);
     }
+
+    [Test]
+    public void FakeItem_ShouldInitialize_Paths()
+    {
+      var item = new FakeItem().ToSitecoreItem();
+
+      item.Paths.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_ItemPath()
+    {
+      string itemPath = "/test/somepath";
+      var item = new FakeItem().WithPath(itemPath).ToSitecoreItem();
+
+      item.Paths.FullPath.Should().Be(itemPath);
+      item.Database.GetItem(itemPath).Should().Be(item);
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_ItemPathSeveralTimes()
+    {
+      string itemPath1 = "/test/somepath";
+      string itemPath2 = "/test/somepath";
+      var fakeItem = new FakeItem().WithPath(itemPath1);
+
+      fakeItem.ToSitecoreItem().Paths.FullPath.Should().Be(itemPath1);
+      fakeItem.WithPath(itemPath2);
+      fakeItem.ToSitecoreItem().Paths.FullPath.Should().Be(itemPath2);
+      fakeItem.ToSitecoreItem().Database.GetItem(itemPath2).Should().Be(fakeItem.ToSitecoreItem());
+    }
+
+    [Test]
+    public void FakeItem_ShouldBePossible_FakeItemAccess()
+    {
+      var fakeItem = new FakeItem();
+
+      fakeItem.ToSitecoreItem().Access.Should().BeNull();
+
+      fakeItem.WithItemAccess();
+      fakeItem.ToSitecoreItem().Access.Should().NotBeNull();
+
+      var item = fakeItem.ToSitecoreItem();
+      item.Access.CanRead().Returns(true);
+
+      item.Access.CanRead().Should().BeTrue();
+    }
+
   }
 }
