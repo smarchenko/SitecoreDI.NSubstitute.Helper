@@ -46,7 +46,7 @@ namespace Sitecore.NSubstitute.UnitTests
 
       service1.GetParent(item).Should().NotBe(service2.GetParent(item));
 
-      Assert.Throws<LicenseException>(() =>
+      Assert.Throws<TypeInitializationException>(() =>
       {
         var a = Sitecore.Data.Managers.ItemManager.GetParent(item);
       });
@@ -64,7 +64,7 @@ namespace Sitecore.NSubstitute.UnitTests
         Sitecore.Data.Managers.ItemManager.GetParent(item).Returns(tmpItem1);
       }
 
-      Assert.Throws<LicenseException>(() =>
+      Assert.Throws<TypeInitializationException>(() =>
       {
         var a = Sitecore.Data.Managers.ItemManager.GetParent(item);
       });
@@ -80,7 +80,7 @@ namespace Sitecore.NSubstitute.UnitTests
         Sitecore.Data.Managers.ItemManager.GetParent(item).Returns(tmpItem2);
       }
 
-      Assert.Throws<LicenseException>(() =>
+      Assert.Throws<TypeInitializationException>(() =>
       {
         var a = Sitecore.Data.Managers.ItemManager.GetParent(item);
       });

@@ -5,6 +5,9 @@ If one builds the project using build scripts, he will be able to reference gene
 
 **Note**: the package does not reference Sitecore API nuget package so that it does not require Sitecore infrastructure. Please add references to Sitecore.Kernel file manually.
 
+**Note** The solution is referencing some Sitecore assemblies taken from the [official public NuGet server](https://sitecore.myget.org/gallery/sc-packages)
+
+
 ## Creating Item structures
 FakeItem class allows to initialize the item with the most useful properties easily. This class also allows to create item structures in a few lines of code.
 
