@@ -4,12 +4,11 @@
     <id>SitecoreDI.NSubstitute.Util</id>
     <version>1.0.0</version>
     <title>SitecoreDI.NSubstitute.Util</title>
-    <authors>Sitecore A/S</authors>
-    <owners>Sitecore A/S</owners>
+    <authors>Sergey Marchenko</authors>
+    <owners>Sergey Marchenko</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper classes to test Sitecote API using NSubstitute.</description>
-    <copyright>Copyright (C) by Sitecore A/S</copyright>
-    <tags>Sitecore DI NSubstitute</tags>
+    <tags>Sitecore NSubstitute</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.5.2">
         <dependency id="NSubstitute" version="1.9.2.0" />
