@@ -8,6 +8,8 @@ using NSubstitute;
 using NUnit.Framework;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Links;
+using Sitecore.Data.Locking;
 
 namespace Sitecore.NSubstitute.UnitTests
 {
@@ -37,12 +39,13 @@ namespace Sitecore.NSubstitute.UnitTests
       var item = (Item) new FakeItem();
 
       item.Fields.Should().NotBeNull();
-      item.Editing.Should().NotBeNull();
       item.Template.Should().NotBeNull();
       item.Children.Should().NotBeNull();
       item.Children.Count.Should().Be(0);
       item.Database.Should().NotBeNull();
       item.Database.GetItem(item.ID).Should().Be(item);
+      item.Language.Should().Be(Globalization.Language.Invariant);
+      item.Version.Should().Be(Sitecore.Data.Version.First);
     }
 
     [Test]
@@ -245,5 +248,103 @@ namespace Sitecore.NSubstitute.UnitTests
       item.Database.GetItem(item.Uri.ToDataUri()).Should().Be(item);
     }
 
+    [Test]
+    public void FakeItem_ShouldFake_Appearance()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Appearance.Should().BeNull();
+      item.WithAppearance(Substitute.For<ItemAppearance>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Appearance.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_Statistics()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Statistics.Should().BeNull();
+      item.WithStatistics(Substitute.For<ItemStatistics>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Statistics.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_Links()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Links.Should().BeNull();
+      item.WithItemLinks(Substitute.For<ItemLinks>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Links.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_Locking()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Locking.Should().BeNull();
+      item.WithItemLocking(Substitute.For<ItemLocking>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Locking.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_Versions()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Versions.Should().BeNull();
+      item.WithItemVersions(Substitute.For<ItemVersions>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Versions.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_Axes()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Axes.Should().BeNull();
+      item.WithItemAxes(Substitute.For<ItemAxes>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Axes.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_ItemEditing()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Editing.Should().BeNull();
+      item.WithItemEditing(Substitute.For<ItemEditing>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Editing.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ShouldSupportExtanding_WithExtensionMethods()
+    {
+      var item = new FakeItem();
+
+      item.ToSitecoreItem().Help.Should().BeNull();
+
+      item.WithItemHelp(Substitute.For<ItemHelp>(item.ToSitecoreItem()));
+
+      item.ToSitecoreItem().Help.Should().NotBeNull();
+    }
+  }
+
+  public static class TestFakeItemExtensions
+  {
+    public static FakeItem WithItemHelp(this FakeItem item, ItemHelp itemHelp)
+    {
+      item.ToSitecoreItem().Help.Returns(itemHelp);
+
+      return item;
+    }
   }
 }

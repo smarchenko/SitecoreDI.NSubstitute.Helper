@@ -8,8 +8,9 @@ If one builds the project using build scripts, he will be able to reference gene
 **Note** The solution is referencing some Sitecore assemblies taken from the [official public NuGet server](https://sitecore.myget.org/gallery/sc-packages)
 
 
-## Creating Item structures
-FakeItem class allows to initialize the item with the most useful properties easily. This class also allows to create item structures in a few lines of code.
+## Creating Item and structures of items
+FakeItem class allows to initialize the item with the most useful properties easily. 
+This class also allows to create item structures in a few lines of code.
 
 Example:
 ```C#
@@ -36,6 +37,21 @@ Example:
       scItem.Database.GetItem(childID1).Should().NotBeNull();
       scItem.Database.GetItem(childID1).ID.Should().Be(childID1);
     }
+```
+
+Also the class can easily be extended by adding all necessary methods via extension methods.
+
+Example:
+```C#
+  public static class TestFakeItemExtensions
+  {
+    public static FakeItem WithItemHelp(this FakeItem item, ItemHelp itemHelp)
+    {
+      item.ToSitecoreItem().Help.Returns(itemHelp);
+
+      return item;
+    }
+  }
 ```
 
 More examples your can find [here](https://github.com/smarchenko/SitecoreDI.NSubstitute.Helper/blob/master/code/Sitecore.NSubstitute.UnitTests/FakeItemTester.cs)

@@ -4,7 +4,9 @@ using Sitecore.Data;
 using Sitecore.Data.Engines;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
+using Sitecore.Data.Locking;
 using Sitecore.Data.Templates;
+using Sitecore.Links;
 using Sitecore.Security.AccessControl;
 
 namespace Sitecore.NSubstitute
@@ -17,7 +19,6 @@ namespace Sitecore.NSubstitute
     {
       this.Item = FakeUtil.FakeItem(id ?? ID.NewID, "fakeItem", database ?? FakeUtil.FakeDatabase());
       FakeUtil.FakeItemFields(this.Item);
-      FakeUtil.FakeItemEditing(this.Item);
       FakeUtil.FakeItemPath(this.Item);
       
       var templateItem = Substitute.For<TemplateItem>(this.Item);
@@ -205,6 +206,55 @@ namespace Sitecore.NSubstitute
       Item.Version.Returns(version);
 
       Item.Database.GetItem(Item.ID, Item.Language ?? Sitecore.Globalization.Language.Invariant, Item.Version).Returns(Item);
+      return this;
+    }
+
+    public FakeItem WithAppearance(ItemAppearance appearance)
+    {
+      Item.Appearance.Returns(appearance);
+
+      return this;
+    }
+
+    public FakeItem WithStatistics(ItemStatistics statistics)
+    {
+      Item.Statistics.Returns(statistics);
+
+      return this;
+    }
+
+    public FakeItem WithItemLinks(ItemLinks links)
+    {
+      Item.Links.Returns(links);
+
+      return this;
+    }
+
+    public FakeItem WithItemLocking(ItemLocking itemLocking)
+    {
+      Item.Locking.Returns(itemLocking);
+
+      return this;
+    }
+
+    public FakeItem WithItemVersions(ItemVersions versions)
+    {
+      Item.Versions.Returns(versions);
+
+      return this;
+    }
+
+    public FakeItem WithItemAxes(ItemAxes axes)
+    {
+      Item.Axes.Returns(axes);
+
+      return this;
+    }
+
+    public FakeItem WithItemEditing(ItemEditing itemEditing)
+    {
+      Item.Editing.Returns(itemEditing);
+
       return this;
     }
   }
