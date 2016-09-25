@@ -22,10 +22,14 @@ namespace Sitecore.NSubstitute
       
       var templateItem = Substitute.For<TemplateItem>(this.Item);
       this.Item.Template.Returns(templateItem);
+      Item.Language.Returns(Globalization.Language.Invariant);
+      Item.Version.Returns(Version.First);
 
       this.Item.Children.Returns(new ChildList(this.Item, this.childList));
       this.Item.Database.GetItem(this.Item.ID).Returns(this.Item);
       this.Item.Database.GetItem(this.Item.ID.ToString()).Returns(this.Item);
+      this.Item.Database.GetItem(this.Item.ID, Item.Language, Item.Version).Returns(this.Item);
+      this.Item.Database.GetItem(this.Item.ID, Item.Language).Returns(this.Item);
     }
 
     public ID ID
@@ -159,6 +163,48 @@ namespace Sitecore.NSubstitute
     public FakeItem WithItemAccess()
     {
       FakeUtil.FakeItemAccess(this.Item);
+      return this;
+    }
+
+    public FakeItem WithUri()
+    {
+      var uri = Substitute.For<ItemUri>(Item.ID, Item.Paths == null? string.Empty : Item.Paths.FullPath, Item.Language ?? Sitecore.Globalization.Language.Invariant, Item.Version ?? Version.Latest, Item.Database.Name);
+      return WithUri(uri);
+    }
+
+    public FakeItem WithUri(ItemUri uri)
+    {
+      Item.Uri.Returns(uri);
+      Item.Database.GetItem(this.Item.Uri.ToDataUri()).Returns(Item);
+      return this;
+    }
+
+    public FakeItem WithLanguage(string languageName)
+    {
+      return WithLanguage(Globalization.Language.Parse(languageName));
+    }
+
+    public FakeItem WithLanguage(Sitecore.Globalization.Language language)
+    {
+      Item.Language.Returns(language);
+
+      Item.Database.GetItem(Item.ID, Item.Language).Returns(Item);
+      Item.Database.GetItem(Item.ID, Item.Language, Item.Version ?? Version.First).Returns(Item);
+      return this;
+    }
+
+    public FakeItem WithVersion(int number)
+    {
+      var version = Version.Parse(number);
+
+      return WithVersion(version);
+    }
+
+    public FakeItem WithVersion(Sitecore.Data.Version version)
+    {
+      Item.Version.Returns(version);
+
+      Item.Database.GetItem(Item.ID, Item.Language ?? Sitecore.Globalization.Language.Invariant, Item.Version).Returns(Item);
       return this;
     }
   }

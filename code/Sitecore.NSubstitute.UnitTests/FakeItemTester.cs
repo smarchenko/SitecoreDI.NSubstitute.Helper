@@ -201,5 +201,49 @@ namespace Sitecore.NSubstitute.UnitTests
       item.Access.CanRead().Should().BeTrue();
     }
 
+    [Test]
+    public void FakeItem_ShouldFake_LanguageByName()
+    {
+      var fakeItem = new FakeItem()
+                      .WithLanguage("en-US");
+
+      var item = fakeItem.ToSitecoreItem();
+      item.Language.Should().NotBeNull();
+      item.Language.Name.Should().Be("en-US");
+      item.Database.GetItem(item.ID, item.Language).Should().Be(item);
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_LanguageObject()
+    {
+      var fakeItem = new FakeItem()
+                      .WithLanguage(Sitecore.Globalization.Language.Parse("en-US"));
+
+      var item = fakeItem.ToSitecoreItem();
+      item.Language.Should().NotBeNull();
+      item.Language.Name.Should().Be("en-US");
+      item.Database.GetItem(item.ID, item.Language).Should().Be(item);
+    }
+
+    [Test]
+    public void FakeItem_ShouldFake_Uri()
+    {
+      var fakeItem = new FakeItem();
+      fakeItem
+        .WithPath("/test/path")
+        .WithLanguage("da")
+        .WithVersion(4)
+        .WithUri();
+
+      var item = fakeItem.ToSitecoreItem();
+      item.Uri.Should().NotBeNull();
+      item.Uri.ItemID.Should().Be(item.ID);
+      item.Uri.Path.Should().Be(item.Paths.FullPath);
+      item.Uri.DatabaseName.Should().Be(item.Database.Name);
+      item.Uri.Language.Should().Be(item.Language);
+      item.Uri.Version.Should().Be(item.Version);
+      item.Database.GetItem(item.Uri.ToDataUri()).Should().Be(item);
+    }
+
   }
 }
