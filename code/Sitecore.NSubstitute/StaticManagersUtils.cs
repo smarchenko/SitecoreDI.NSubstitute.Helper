@@ -36,7 +36,7 @@ using Sitecore.Syndication;
 using Sitecore.Visualization;
 using Sitecore.Web.Authentication;
 
-namespace Sitecore.NSubstitute
+namespace Sitecore.NSubstituteUtils
 {
   public static class StaticManagersUtils
   {

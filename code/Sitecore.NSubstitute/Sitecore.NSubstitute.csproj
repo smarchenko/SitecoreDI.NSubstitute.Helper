@@ -7,8 +7,8 @@
     <ProjectGuid>{755F5087-9953-4D59-83FB-59B29053E4BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sitecore.NSubstitute</RootNamespace>
-    <AssemblyName>Sitecore.NSubstitute</AssemblyName>
+    <RootNamespace>Sitecore.NSubstituteUtils</RootNamespace>
+    <AssemblyName>Sitecore.NSubstituteUtils</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

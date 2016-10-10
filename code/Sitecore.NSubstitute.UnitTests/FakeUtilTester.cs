@@ -11,7 +11,7 @@ using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Globalization;
 
-namespace Sitecore.NSubstitute.UnitTests
+namespace Sitecore.NSubstituteUtils.UnitTests
 {
   [TestFixture]
   public class FakeUtilTester

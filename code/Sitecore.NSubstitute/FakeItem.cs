@@ -9,7 +9,7 @@ using Sitecore.Data.Templates;
 using Sitecore.Links;
 using Sitecore.Security.AccessControl;
 
-namespace Sitecore.NSubstitute
+namespace Sitecore.NSubstituteUtils
 {
   public class FakeItem
   {

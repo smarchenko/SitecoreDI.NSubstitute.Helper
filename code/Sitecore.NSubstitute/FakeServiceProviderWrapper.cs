@@ -2,7 +2,7 @@
 using System.Threading;
 using Sitecore.DependencyInjection;
 
-namespace Sitecore.NSubstitute
+namespace Sitecore.NSubstituteUtils
 {
   public class FakeServiceProviderWrapper : IDisposable
   {

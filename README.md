@@ -1,4 +1,4 @@
-# SitecoreDI.NSubstitute.Helper
+# Sitecore.NSubstituteUtils
 The reason for this project is to just show some hints to developers for how they can substitute some Sitecore classes.
 
 If one builds the project using build scripts, he will be able to reference generated nuget package with helper utils for further using it in own project.

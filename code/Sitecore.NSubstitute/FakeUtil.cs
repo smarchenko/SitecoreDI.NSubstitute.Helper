@@ -9,7 +9,7 @@ using Sitecore.Globalization;
 using Sitecore.Links;
 using Sitecore.Security.AccessControl;
 
-namespace Sitecore.NSubstitute
+namespace Sitecore.NSubstituteUtils
 {
   public static class FakeUtil
   {

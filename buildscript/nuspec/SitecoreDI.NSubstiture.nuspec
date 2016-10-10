@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
-    <id>SitecoreDI.NSubstitute.Util</id>
+    <id>Sitecore.NSubstituteUtils</id>
     <version>1.0.0</version>
-    <title>SitecoreDI.NSubstitute.Util</title>
+    <title>Sitecore.NSubstituteUtils</title>
     <authors>Sergey Marchenko</authors>
     <owners>Sergey Marchenko</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -16,6 +16,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="code\Sitecore.NSubstitute\bin\Release\Sitecore.NSubstitute*.*" target="lib\net452" />
+    <file src="code\Sitecore.NSubstitute\bin\Release\Sitecore.NSubstituteUtils*.*" target="lib\net452" />
   </files>  
 </package>

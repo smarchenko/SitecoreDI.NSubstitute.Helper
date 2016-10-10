@@ -7,7 +7,7 @@ using Sitecore.Configuration;
 using Sitecore.Data.Managers;
 using Sitecore.SecurityModel.License;
 
-namespace Sitecore.NSubstitute.UnitTests
+namespace Sitecore.NSubstituteUtils.UnitTests
 {
   [TestFixture]
   public class FakeServiveProviderTester
