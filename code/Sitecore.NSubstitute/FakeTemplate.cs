@@ -34,7 +34,17 @@ namespace Sitecore.NSubstituteUtils
       templateEngine.GetTemplate(name).Returns(this);
     }
 
-    private Database Database { get; set; }
+    public Database Database { get; private set; }
+
+    public TemplateEngine TemplateEngine
+    {
+      get { return this.templateEngine; }
+    }
+
+    public Template.Builder TemplateBuilder
+    {
+      get { return this.templateBuilder; }
+    }
 
     public FakeTemplate WithBaseIDs(ID[] baseIDs)
     {
