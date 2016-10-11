@@ -149,6 +149,24 @@ namespace Sitecore.NSubstituteUtils.UnitTests
     }
 
     [Test]
+    public void FakeItem_ShouldReturnFalse_IfNoChildrenAdded()
+    {
+      var item = new FakeItem().ToSitecoreItem();
+
+      item.HasChildren.Should().BeFalse();
+    }
+
+    [Test]
+    public void FakeItem_ShouldReturnTrue_IfChildAdded()
+    {
+      var item = new FakeItem()
+        .WithChild(new FakeItem())
+        .ToSitecoreItem();
+
+      item.HasChildren.Should().BeTrue();
+    }
+    
+    [Test]
     public void FakeItem_ShouldAdd_ChildItem()
     {
       var item = new FakeItem();
