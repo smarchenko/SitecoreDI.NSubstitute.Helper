@@ -48,5 +48,49 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.GetBaseTemplates().Should().NotBeNull();
       template.GetBaseTemplates()[0].ID.Should().Be(new ID(baseIDs));
     }
+
+    [Test]
+    public void FakeTemplate_Descendants()
+    {
+      string baseIDs = ID.NewID.ToString();
+      var template = new FakeTemplate()
+        .WithBaseIDs(new ID[] { new ID(baseIDs) }).ToSitecoreTemplate();
+
+      template.DescendsFrom(new ID(baseIDs)).Should().BeTrue();
+      template.DescendsFrom(ID.NewID).Should().BeFalse();
+      template.DescendsFromOrEquals(new ID(baseIDs)).Should().BeTrue();
+      template.DescendsFromOrEquals(ID.NewID).Should().BeFalse();
+      template.DescendsFromOrEquals(template.ID).Should().BeTrue();
+    }
+
+    [Test]
+    public void FakeTemplate_SetFullName()
+    {
+      string fullName = "fake full name";
+      var template = new FakeTemplate()
+        .WithFullName(fullName);
+
+      template.ToSitecoreTemplate().FullName.Should().Be(fullName);
+      template.TemplateEngine.GetTemplate(fullName).Should().Be(template.ToSitecoreTemplate());
+    }
+
+    [Test]
+    public void FakeTemplate_SetIcon()
+    {
+      string icon = "some fake icon";
+      var template = new FakeTemplate()
+        .WithIcon(icon).ToSitecoreTemplate();
+
+      template.Icon.Should().Be(icon);
+    }
+
+    [Test]
+    public void FakeTemplate_SetStandardValues()
+    {
+      ID svId = ID.NewID;
+      var template = new FakeTemplate().WithStandatdValues(svId);
+
+      template.ToSitecoreTemplate().StandardValueHolderId.Should().Be(svId);
+    }
   }
 }

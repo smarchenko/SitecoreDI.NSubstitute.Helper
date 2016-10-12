@@ -18,14 +18,15 @@ namespace Sitecore.NSubstituteUtils
     private TemplateEngine templateEngine;
 
 
-    public FakeTemplate(string templateName = null, ID templateId = null, Database database = null)
+    public FakeTemplate(string templateName = null, ID templateId = null, Database database = null, TemplateEngine engine = null)
     {
       string name = string.IsNullOrEmpty(templateName) ? "fakeTemplate" : templateName;
       ID id = templateId ?? ID.NewID;
       Database db = database ?? FakeUtil.FakeDatabase();
+
       this.Database = db;
 
-      templateEngine = Substitute.For<TemplateEngine>(db);
+      templateEngine = engine ?? Substitute.For<TemplateEngine>(db);
       templateBuilder = new Template.Builder(name, id, templateEngine);
       templateBuilder.SetName(name);
       templateBuilder.SetID(id);
@@ -44,6 +45,25 @@ namespace Sitecore.NSubstituteUtils
     public Template.Builder TemplateBuilder
     {
       get { return this.templateBuilder; }
+    }
+
+    public FakeTemplate WithStandatdValues(ID standardValuesHolderId)
+    {
+      templateBuilder.SetStandardValueHolderId(standardValuesHolderId.ToString());
+      return this;
+    }
+
+    public FakeTemplate WithIcon(string icon)
+    {
+      templateBuilder.SetIcon(icon);
+      return this;
+    }
+
+    public FakeTemplate WithFullName(string fullName)
+    {
+      templateBuilder.SetFullName(fullName);
+      templateEngine.GetTemplate(fullName).Returns(this);
+      return this;
     }
 
     public FakeTemplate WithBaseIDs(ID[] baseIDs)

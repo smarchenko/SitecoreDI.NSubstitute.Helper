@@ -56,6 +56,7 @@
     <Compile Include="FakeItem.cs" />
     <Compile Include="FakeServiceProviderWrapper.cs" />
     <Compile Include="FakeTemplate.cs" />
+    <Compile Include="FakeTemplateSection.cs" />
     <Compile Include="FakeUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaticManagersUtils.cs" />
