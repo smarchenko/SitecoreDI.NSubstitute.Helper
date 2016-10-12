@@ -104,6 +104,7 @@
     <Compile Include="FakeItemTester.cs" />
     <Compile Include="FakeSectionTester.cs" />
     <Compile Include="FakeServiveProviderTester.cs" />
+    <Compile Include="FakeTemplateFieldTester.cs" />
     <Compile Include="FakeTemplateTester.cs" />
     <Compile Include="FakeUtilTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
