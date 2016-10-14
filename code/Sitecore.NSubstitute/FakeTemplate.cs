@@ -17,6 +17,8 @@ namespace Sitecore.NSubstituteUtils
     private Template.Builder templateBuilder;
     private TemplateEngine templateEngine;
 
+    private List<FakeTemplateSection> sections = new List<FakeTemplateSection>();
+
 
     public FakeTemplate(string templateName = null, ID templateId = null, Database database = null, TemplateEngine engine = null)
     {
@@ -106,5 +108,41 @@ namespace Sitecore.NSubstituteUtils
     {
       return Template;
     }
+
+    public FakeTemplateSection AddSection(string name, ID id)
+    {
+      var builder = templateBuilder.AddSection(name, id);
+      var result  = new FakeTemplateSection(builder);
+      sections.Add(result);
+      return result;
+    }
+
+    public FakeTemplateField AddField(string fieldName, ID fieldId)
+    {
+      return AddField(ID.NewID, fieldName, fieldId);
+    }
+
+    public FakeTemplateField AddField(ID sectionId, string fieldName, ID fieldId)
+    {
+      var sectionBuilder = this.sections.FirstOrDefault(s => s.ToSitecoreTemplateSection().ID == sectionId);
+      if (sectionBuilder == null)
+      {
+        sectionBuilder = this.AddSection(sectionId.ToString(), sectionId);
+      }
+
+      return sectionBuilder.AddField(fieldName, fieldId);
+    }
+
+    public FakeTemplateField AddField(string sectionName, string fieldName, ID fieldId)
+    {
+      var sectionBuilder = this.sections.FirstOrDefault(s => s.ToSitecoreTemplateSection().Name.Equals(sectionName, StringComparison.InvariantCultureIgnoreCase));
+      if (sectionBuilder == null)
+      {
+        sectionBuilder = this.AddSection(sectionName, ID.NewID);
+      }
+
+      return sectionBuilder.AddField(fieldName, fieldId);
+    }
+
   }
 }

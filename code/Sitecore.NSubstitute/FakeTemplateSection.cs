@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sitecore.Data;
+using Sitecore.Data.ItemResolvers;
 using Sitecore.Data.Templates;
 
 namespace Sitecore.NSubstituteUtils
@@ -11,6 +12,12 @@ namespace Sitecore.NSubstituteUtils
   public class FakeTemplateSection
   {
     private TemplateSection.Builder builder;
+
+    public FakeTemplateSection(TemplateSection.Builder builder)
+    {
+      this.builder = builder;
+    }
+
     public FakeTemplateSection(Template template, string sectionName = null, ID sectionId = null)
     {
       var name = sectionName ?? "fakeSection";
@@ -19,6 +26,12 @@ namespace Sitecore.NSubstituteUtils
       builder = new TemplateSection.Builder(name, id, template);
     }
 
+    public FakeTemplateField AddField(string name, ID id)
+    {
+      var fieldBuilder = builder.AddField(name, id);
+      return new FakeTemplateField(fieldBuilder);
+    }
+    
     public TemplateSection ToSitecoreTemplateSection()
     {
       return this.builder.Section; 

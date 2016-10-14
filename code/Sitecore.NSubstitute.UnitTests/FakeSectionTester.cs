@@ -56,5 +56,36 @@ namespace Sitecore.NSubstituteUtils.UnitTests
 
       section.Sortorder.Should().Be(sortorder);
     }
+
+    [Test]
+    public void FakeSection_DefaultGetFields()
+    {
+      var section = new FakeTemplateSection(new FakeTemplate()).ToSitecoreTemplateSection();
+
+      section.GetFields().Should().NotBeNull();
+      section.GetFields().Length.Should().Be(0);
+    }
+
+    [Test]
+    public void FakeSection_AddField()
+    {
+      string name = "test name";
+      ID id = ID.NewID;
+
+      var section = new FakeTemplateSection(new FakeTemplate());
+      var field = section.AddField(name, id);
+      field.WithSortorder(42);
+
+      field.Should().NotBeNull();
+      field.ToSitecoreTemplateField().ID.Should().Be(id);
+
+      section.ToSitecoreTemplateSection().GetFields().Length.Should().Be(1);
+      section.ToSitecoreTemplateSection().GetFields()[0].ID.Should().Be(id);
+      
+      section.ToSitecoreTemplateSection().GetField(id).Should().Be(field.ToSitecoreTemplateField());
+      section.ToSitecoreTemplateSection().GetField(name).Should().Be(field.ToSitecoreTemplateField());
+
+      section.ToSitecoreTemplateSection().GetField(id).Sortorder.Should().Be(42);
+    }
   }
 }

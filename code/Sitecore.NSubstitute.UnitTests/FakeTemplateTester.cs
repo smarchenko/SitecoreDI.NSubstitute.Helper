@@ -92,5 +92,43 @@ namespace Sitecore.NSubstituteUtils.UnitTests
 
       template.ToSitecoreTemplate().StandardValueHolderId.Should().Be(svId);
     }
+
+    [Test]
+    public void FakeTemplate_AddSection()
+    {
+      string name = "test name";
+      ID id = ID.NewID;
+
+      var fakeTemplate = new FakeTemplate();
+      var section = fakeTemplate.AddSection(name, id);
+
+      fakeTemplate.ToSitecoreTemplate().GetSections().Length.Should().Be(1);
+      fakeTemplate.ToSitecoreTemplate().GetSection(id).Should().Be(section.ToSitecoreTemplateSection());
+    }
+
+    [Test]
+    public void FakeTemplate_AddField()
+    {
+      string name1 = "name1";
+      string name2 = "name2";
+      string name3 = "name3";
+      string sectionName1 = "section1";
+      string sectionName2 = "section2";
+
+      var template = new FakeTemplate();
+      template.AddField(sectionName1, name1, ID.NewID);
+      template.AddField(sectionName1, name2, ID.NewID);
+      template.AddField(sectionName2, name3, ID.NewID);
+
+      template.ToSitecoreTemplate().GetSections().Length.Should().Be(2);
+      template.ToSitecoreTemplate().GetSection(sectionName1).GetFields().Length.Should().Be(2);
+      template.ToSitecoreTemplate().GetSection(sectionName2).GetFields().Length.Should().Be(1);
+
+      template.ToSitecoreTemplate().GetFields().Length.Should().Be(3);
+      template.ToSitecoreTemplate()
+        .GetField(name2)
+        .Section.Should()
+        .Be(template.ToSitecoreTemplate().GetSection(sectionName1));
+    }
   }
 }
