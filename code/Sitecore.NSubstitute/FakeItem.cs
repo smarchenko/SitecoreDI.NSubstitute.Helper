@@ -191,7 +191,9 @@ namespace Sitecore.NSubstituteUtils
       Item.Language.Returns(language);
 
       Item.Database.GetItem(Item.ID, Item.Language).Returns(Item);
+      Item.Database.GetItem(Item.ID.ToString(), Item.Language).Returns(Item);
       Item.Database.GetItem(Item.ID, Item.Language, Item.Version ?? Version.First).Returns(Item);
+      Item.Database.GetItem(Item.ID.ToString(), Item.Language, Item.Version ?? Version.First).Returns(Item);
       return this;
     }
 
