@@ -18,11 +18,12 @@ namespace Sitecore.NSubstituteUtils
       this.builder = builder;
     }
 
-    public FakeTemplateField(FakeTemplateSection templateSection, string fieldName = null, ID fieldId = null)
+    public FakeTemplateField(FakeTemplateSection templateSection = null, string fieldName = null, ID fieldId = null)
     {
       var name = fieldName ?? "fakeField";
       var id = fieldId ?? ID.NewID;
-      builder = new TemplateField.Builder(name, id, templateSection);
+      var section = templateSection ?? new FakeTemplateSection();
+      builder = new TemplateField.Builder(name, id, section);
     }
 
     public TemplateField.Builder Builder {

@@ -135,17 +135,43 @@ namespace Sitecore.NSubstituteUtils
       field.Name.Returns(name);
       field.Value.Returns(value);
 
-      this.Item.Fields[name].Returns(field);
-      this.Item.Fields[id].Returns(field);
+      return WithField(field);
+    }
 
-      this.Item[id].Returns(value);
-      this.Item[name].Returns(value);
+    public FakeItem WithField(Field field)
+    {
+      string name = field.Name;
+      string value = field.Value;
+      ID fieldId = field.ID; 
+      if (!string.IsNullOrEmpty(name))
+      {
+        this.Item.Fields[name].Returns(field);
+      }
+
+      if (this.Item.Fields[fieldId] == null)
+      {
+        var count = this.Item.Fields.Count;
+        count++;
+        this.Item.Fields.Count.Returns(count);
+      }
+
+      this.Item.Fields[fieldId].Returns(field);
+
+      this.Item[fieldId].Returns(value);
+      if (!string.IsNullOrEmpty(name))
+      {
+        this.Item[name].Returns(value);
+      }
 
       var sectionItem = Substitute.For<TemplateSectionItem>(this.Item, this.Item.Template);
       var templateField = Substitute.For<TemplateFieldItem>(this.Item, sectionItem);
 
-      this.Item.Template.GetField(name).Returns(templateField);
-      this.Item.Template.GetField(id).Returns(templateField);
+      if (!string.IsNullOrEmpty(name))
+      {
+        this.Item.Template.GetField(name).Returns(templateField);
+      }
+
+      this.Item.Template.GetField(fieldId).Returns(templateField);
 
       return this;
     }

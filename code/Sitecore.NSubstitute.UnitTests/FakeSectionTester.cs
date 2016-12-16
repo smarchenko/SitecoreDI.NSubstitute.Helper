@@ -24,6 +24,14 @@ namespace Sitecore.NSubstituteUtils.UnitTests
     }
 
     [Test]
+    public void FakeSection_EmptyContructor()
+    {
+      var section = new FakeTemplateSection().ToSitecoreTemplateSection();
+
+      section.Should().NotBeNull();
+    }
+
+    [Test]
     public void FakeSection_NonDefaultInitialization()
     {
       string name = "test name";

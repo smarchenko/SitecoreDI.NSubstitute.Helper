@@ -101,6 +101,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FakeFieldTester.cs" />
     <Compile Include="FakeItemTester.cs" />
     <Compile Include="FakeSectionTester.cs" />
     <Compile Include="FakeServiveProviderTester.cs" />
