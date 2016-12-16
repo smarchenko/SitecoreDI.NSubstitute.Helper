@@ -13,6 +13,8 @@ using Sitecore.Data.Locking;
 
 namespace Sitecore.NSubstituteUtils.UnitTests
 {
+  using Sitecore.Security.AccessControl;
+
   [TestFixture]
   public class FakeItemTester
   {
@@ -365,6 +367,339 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.WithItemHelp(Substitute.For<ItemHelp>(item.ToSitecoreItem()));
 
       item.ToSitecoreItem().Help.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_ItemAccess_SubstitutesObject()
+    {
+      var item = new FakeItem();
+      var access = Substitute.For<ItemAccess>(item.ToSitecoreItem());
+      item.WithItemAccess(access);
+
+      item.ToSitecoreItem().Access.Should().Be(access);
+    }
+
+    [Test]
+    public void FakeItem_DefaultAppearance()
+    {
+      var item = new FakeItem()
+        .WithAppearance()
+        .ToSitecoreItem();
+
+      item.Appearance.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_DefaultStatistics()
+    {
+      var item = new FakeItem()
+        .WithStatistics()
+        .ToSitecoreItem();
+
+      item.Statistics.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_DefaultLinks()
+    {
+      var item = new FakeItem()
+        .WithItemLinks()
+        .ToSitecoreItem();
+
+      item.Links.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_DefaultLocking()
+    {
+      var item = new FakeItem()
+        .WithItemLocking()
+        .ToSitecoreItem();
+
+      item.Locking.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_DefaultVersions()
+    {
+      var item = new FakeItem()
+        .WithItemVersions()
+        .ToSitecoreItem();
+
+      item.Versions.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_DefaultAxes()
+    {
+      var item = new FakeItem()
+        .WithItemAxes()
+        .ToSitecoreItem();
+
+      item.Axes.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_DefaultEditing()
+    {
+      var item = new FakeItem()
+        .WithItemEditing()
+        .ToSitecoreItem();
+
+      item.Editing.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_DefaultBranch()
+    {
+      var item = new FakeItem()
+        .WithBranch()
+        .ToSitecoreItem();
+
+      item.Branch.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_BranchId()
+    {
+      var id = ID.NewID;
+      var item = new FakeItem()
+        .WithBranchId(id)
+        .ToSitecoreItem();
+
+      item.BranchId.Should().Be(id);
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_Branches()
+    {
+      var branches = new BranchItem[0];
+      var item = new FakeItem()
+        .WithBranches(branches)
+        .ToSitecoreItem();
+
+      item.Branches.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_Created()
+    {
+      var created = DateTime.UtcNow;
+      var item = new FakeItem()
+        .WithCreated(created)
+        .ToSitecoreItem();
+
+      item.Created.Should().Be(created);
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_DisplayName()
+    {
+      var name = "name";
+      var item = new FakeItem()
+        .WithDisplayName(name)
+        .ToSitecoreItem();
+
+      item.DisplayName.Should().Be(name);
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_GetNonEmptyClones()
+    {
+      var clones = new Item[] { new FakeItem().ToSitecoreItem() };
+      var item = new FakeItem()
+        .WithGetClones(clones)
+        .ToSitecoreItem();
+
+      item.GetClones().Count().Should().Be(clones.Length);
+      item.HasClones.Should().Be(clones.Length > 0);
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_GetEmptyClones()
+    {
+      var clones = new Item[] { };
+      var item = new FakeItem()
+        .WithGetClones(clones)
+        .ToSitecoreItem();
+
+      item.GetClones().Count().Should().Be(clones.Length);
+      item.HasClones.Should().Be(clones.Length > 0);
+    }
+
+    [Test]
+    public void FakeItem_DefaultHelp()
+    {
+      var item = new FakeItem()
+        .WithHelp()
+        .ToSitecoreItem();
+
+      item.Help.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_IsClone()
+    {
+      var item = new FakeItem()
+        .WithIsClone(true)
+        .ToSitecoreItem();
+
+      item.IsClone.Should().BeTrue();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_IsFallback()
+    {
+      var item = new FakeItem()
+        .WithIsFallback(true)
+        .ToSitecoreItem();
+
+      item.IsFallback.Should().BeTrue();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_Languages()
+    {
+      var item = new FakeItem()
+        .WithLanguages(new[] { "en", "da" })
+        .ToSitecoreItem();
+
+      item.Languages.Length.Should().Be(2);
+      item.Languages.Any(x => x.Name == "en").Should().BeTrue();
+      item.Languages.Any(x => x.Name == "da").Should().BeTrue();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_Modified()
+    {
+      var item = new FakeItem()
+        .WithModified(true)
+        .ToSitecoreItem();
+
+      item.Modified.Should().BeTrue();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_OriginatorId()
+    {
+      var id = ID.NewID;
+      var item = new FakeItem()
+        .WithOriginatorId(id)
+        .ToSitecoreItem();
+
+      item.OriginatorId.Should().Be(id);
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_OriginalLanguage()
+    {
+      var item = new FakeItem()
+        .WithOriginalLanguage("da")
+        .ToSitecoreItem();
+
+      item.OriginalLanguage.Name.Should().Be("da");
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_OriginalPublishing()
+    {
+      var item = new FakeItem()
+        .WithPublishing()
+        .ToSitecoreItem();
+
+      item.Publishing.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_RuntimeSettings()
+    {
+      var item = new FakeItem()
+        .WithRuntimeSettings()
+        .ToSitecoreItem();
+
+      item.RuntimeSettings.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_Security()
+    {
+      var item = new FakeItem()
+        .WithSecurity()
+        .ToSitecoreItem();
+
+      item.Security.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_Source()
+    {
+      var source = new FakeItem().ToSitecoreItem();
+      var item = new FakeItem()
+        .WithSource(source)
+        .ToSitecoreItem();
+
+      item.Source.Should().Be(source);
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_SourceUri()
+    {
+      var item = new FakeItem()
+        .WithSourceUri()
+        .ToSitecoreItem();
+
+      item.SourceUri.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_State()
+    {
+      var item = new FakeItem()
+        .WithState()
+        .ToSitecoreItem();
+
+      item.State.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_TemplateName()
+    {
+      var item = new FakeItem()
+        .WithTemplateName("name")
+        .ToSitecoreItem();
+
+      item.TemplateName.Should().Be("name");
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_Visualizations()
+    {
+      var item = new FakeItem()
+        .WithVisualization()
+        .ToSitecoreItem();
+
+      item.Visualization.Should().NotBeNull();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_IsItemClone()
+    {
+      var item = new FakeItem()
+        .WithIsItemClone(true)
+        .ToSitecoreItem();
+
+      item.IsItemClone.Should().BeTrue();
+    }
+
+    [Test]
+    public void FakeItem_Substitutes_SharedFieldSource()
+    {
+      var source = new FakeItem().ToSitecoreItem();
+      var item = new FakeItem()
+        .WithSharedFieldsSource(source)
+        .ToSitecoreItem();
+
+      item.SharedFieldsSource.Should().Be(source);
     }
   }
 
