@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 using Sitecore.Data;
 using Sitecore.Globalization;
 
 namespace Sitecore.NSubstituteUtils.UnitTests
 {
-  [TestFixture]
+  
   public class FakeTemplateFieldTester
   {
-    [Test]
+    [Fact]
     public void FakeTemplateField_DefaultInitialization()
     {
       var fakeField = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()));
@@ -20,7 +20,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.ID.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_NonDefaultInitialization()
     {
       string name = "test name";
@@ -32,7 +32,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.ID.Should().Be(id);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetIcon()
     {
       string icon = "test icon";
@@ -43,7 +43,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Icon.Should().Be(icon);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetType()
     {
       string fieldType = "test type";
@@ -54,7 +54,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Type.Should().Be(fieldType);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetStyle()
     {
       string fieldStyle = "test style";
@@ -65,7 +65,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Style.Should().Be(fieldStyle);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetTitle()
     {
       string fieldTitle = "test title";
@@ -79,7 +79,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.GetTitle(Language.Parse("en")).Should().Be("");
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetIsBlob()
     {
       bool isBlob = true;
@@ -90,7 +90,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.IsBlob.Should().Be(isBlob);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetIsShared()
     {
       bool isShared = true;
@@ -101,7 +101,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.IsShared.Should().Be(isShared);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetSource()
     {
       string source = "test source";
@@ -112,7 +112,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Source.Should().Be(source);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetToolTip()
     {
       string fieldToolTip = "test tooltip";
@@ -126,7 +126,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.GetToolTip(Language.Parse("en")).Should().Be("");
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetHelpLink()
     {
       string link = "test link";
@@ -137,7 +137,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.HelpLink.Should().Be(link);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetSortorder()
     {
       int sort = 100;
@@ -148,7 +148,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Sortorder.Should().Be(sort);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetResetBlank()
     {
       bool reset = true;
@@ -159,7 +159,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.ResetBlank.Should().Be(reset);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetValidation()
     {
       string validation = "validation";
@@ -170,7 +170,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Validation.Should().Be(validation);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetDescription()
     {
       string fieldDescription = "test description";
@@ -184,7 +184,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.GetDescription(Language.Parse("en")).Should().Be("");
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetUnversioned()
     {
       bool unversioned = true;
@@ -195,7 +195,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.IsUnversioned.Should().Be(unversioned);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetDefaultValue()
     {
       string defaultValue = "default value";
@@ -206,7 +206,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.DefaultValue.Should().Be(defaultValue);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetValidationText()
     {
       string text = "test validation text";
@@ -220,7 +220,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.GetValidationText(Language.Parse("en")).Should().Be("");
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetExcludeFromTextSearch()
     {
       bool exclude = true;
@@ -231,7 +231,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.ExcludeFromTextSearch.Should().Be(exclude);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetIgnoreDictionaryTranslations()
     {
       bool ignore = true;
@@ -242,7 +242,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.IgnoreDictionaryTranslations.Should().Be(ignore);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplateField_SetSharedLanguageFallbackEnabled()
     {
       bool enabled = true;

@@ -1,18 +1,19 @@
 ﻿using System;
 using FluentAssertions;
 using NSubstitute;
-using NUnit.Framework;
+using Xunit;
 using Sitecore.Abstractions;
 using Sitecore.Configuration;
 using Sitecore.Data.Managers;
 
 namespace Sitecore.NSubstituteUtils.UnitTests
 {
-  [TestFixture]
-  public class FakeServiveProviderTester
+ 
+  [Trait("Unit", "ServiceLocator-related")]
+  public class FakeServiceProviderTester
   {
-    [Test]
-    public void SimleProviderWrapper_ShouldWork()
+    [Fact]
+    public void SimpleProviderWrapper_ShouldWork()
     {
       var item = FakeUtil.FakeItem();
       var service1 = Substitute.For<BaseItemManager>();
@@ -31,7 +32,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       }
     }
 
-    [Test]
+    [Fact]
     public void ShouldResolveServiceUsingLatestRegisteredServiceProvider()
     {
       var item = FakeUtil.FakeItem();

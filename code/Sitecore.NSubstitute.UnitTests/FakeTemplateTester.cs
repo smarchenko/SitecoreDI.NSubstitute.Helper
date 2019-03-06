@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 using Sitecore.Data;
 
 
 namespace Sitecore.NSubstituteUtils.UnitTests
 {
-  [TestFixture]
+  
   public class FakeTemplateTester
   {
-    [Test]
+    [Fact]
     public void FakeTemplate_ParametrlessInitialization()
     {
       var template = new FakeTemplate().ToSitecoreTemplate();
@@ -20,7 +20,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.BaseIDs.Length.Should().Be(0);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_ParametrizedInitialization()
     {
       ID id = ID.NewID;
@@ -31,7 +31,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.ID.Should().Be(id);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_BaseIDs()
     {
       string baseIDs = ID.NewID.ToString();
@@ -44,7 +44,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.GetBaseTemplates()[0].ID.Should().Be(new ID(baseIDs));
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_Descendants()
     {
       string baseIDs = ID.NewID.ToString();
@@ -58,7 +58,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.DescendsFromOrEquals(template.ID).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_SetFullName()
     {
       string fullName = "fake full name";
@@ -69,7 +69,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.TemplateEngine.GetTemplate(fullName).Should().Be(template.ToSitecoreTemplate());
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_SetIcon()
     {
       string icon = "some fake icon";
@@ -79,7 +79,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.Icon.Should().Be(icon);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_SetStandardValues()
     {
       ID svId = ID.NewID;
@@ -88,7 +88,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       template.ToSitecoreTemplate().StandardValueHolderId.Should().Be(svId);
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_AddSection()
     {
       string name = "test name";
@@ -101,7 +101,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       fakeTemplate.ToSitecoreTemplate().GetSection(id).Should().Be(section.ToSitecoreTemplateSection());
     }
 
-    [Test]
+    [Fact]
     public void FakeTemplate_AddField()
     {
       string name1 = "name1";
