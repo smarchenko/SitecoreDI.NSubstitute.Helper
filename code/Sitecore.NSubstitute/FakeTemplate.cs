@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using NSubstitute;
-using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Engines;
 using Sitecore.Data.Templates;
-using Sitecore.Pipelines.HttpRequest;
 
 namespace Sitecore.NSubstituteUtils
 {
