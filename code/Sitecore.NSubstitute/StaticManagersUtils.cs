@@ -45,14 +45,12 @@ namespace Sitecore.NSubstituteUtils
       ResetStaticManager(typeof(ItemManager));
       ResetStaticManager(typeof(TemplateManager));
       ResetStaticManager(typeof(PublishManager));
-      ResetStaticManager(typeof(HistoryManager));
-      ResetStaticManager(typeof(IndexingManager));
+      ResetStaticManager(typeof(HistoryManager));      
       ResetStaticManager(typeof(LanguageManager));
       ResetStaticManager(typeof(ThemeManager));
       ResetStaticManager(typeof(CacheManager));
       ResetStaticManager(typeof(FieldTypeManager));
-      ResetStaticManager(typeof(LanguageFallbackFieldValuesManager));
-      ResetStaticManager(typeof(ProxyManager));
+      ResetStaticManager(typeof(LanguageFallbackFieldValuesManager));      
       ResetStaticManager(typeof(Manager));
       ResetStaticManager(typeof(ValidatorManager));
       ResetStaticManager(typeof(StandardValuesManager));
