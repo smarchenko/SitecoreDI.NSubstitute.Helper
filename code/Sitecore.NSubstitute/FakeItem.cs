@@ -14,9 +14,6 @@ namespace Sitecore.NSubstituteUtils
   using System;
   using System.Collections.Generic;
   using System.Linq;
-
-  using NSubstitute.Core;
-
   using Sitecore.Globalization;
 
   using Version = Sitecore.Data.Version;

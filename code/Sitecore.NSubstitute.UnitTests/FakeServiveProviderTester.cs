@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Sitecore.Abstractions;
 using Sitecore.Configuration;
 using Sitecore.Data.Managers;
-using Sitecore.SecurityModel.License;
 
 namespace Sitecore.NSubstituteUtils.UnitTests
 {
