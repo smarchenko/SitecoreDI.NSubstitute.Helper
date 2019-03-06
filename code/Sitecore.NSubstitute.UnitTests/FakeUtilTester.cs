@@ -1,17 +1,19 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using FluentAssertions;
 using NSubstitute;
-using NUnit.Framework;
+using Xunit;
 using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Globalization;
+using Version = Sitecore.Data.Version;
 
 namespace Sitecore.NSubstituteUtils.UnitTests
 {
-  [TestFixture]
+  
   public class FakeUtilTester
   {
-    [Test]
+    [Fact]
     public void FakeDatabase_ShouldReturn_FakeDatabaseWithSpecifiedName()
     {
       string databaseName = "fake name";
@@ -22,7 +24,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       database.Name.Should().Be(databaseName);
     }
 
-    [Test]
+    [Fact]
     public void FakeDatabase_ShouldReturn_FakeDatabaseWithDefaultName()
     {
       var database = FakeUtil.FakeDatabase();
@@ -32,7 +34,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       database.Name.Should().Be("fakeDB");
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldReturn_FakeItemWithSpecifiedParameters()
     {
       var database = FakeUtil.FakeDatabase();
@@ -47,7 +49,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.Should().Be(database);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldReturn_FakeItemWithSpecifiedNameAndDatabase()
     {
       var database = FakeUtil.FakeDatabase();
@@ -61,7 +63,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.Should().Be(database);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldReturn_FakeItemWithDefaultNameAndDatabase()
     {
       var database = FakeUtil.FakeDatabase();
@@ -75,7 +77,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.Should().Be(database);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldReturn_FakeItemWithSpecifiedName()
     {
       var name = "test fake item";
@@ -88,7 +90,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldReturn_FakeItemWithDefaultValues()
     {
       var name = "fakeItem";
@@ -101,7 +103,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeField_ShouldReturn_FakeFieldWithSpecidiedParameters()
     {
       var id = ID.NewID;
@@ -114,7 +116,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Database.Should().Be(item.Database);
     }
 
-    [Test]
+    [Fact]
     public void FakeField_ShouldReturn_FakeFieldWithDefaultID()
     {
       var item = FakeUtil.FakeItem();
@@ -126,7 +128,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       field.Database.Should().Be(item.Database);
     }
 
-    [Test]
+    [Fact]
     public void FakeItemFields_ShouldReturn_FakeCollection()
     {
       var item = FakeUtil.FakeItem();
@@ -138,7 +140,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Fields.Should().BeAssignableTo<FieldCollection>();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemFields_ShouldReturn_AllowsToFakeField()
     { 
       var item = FakeUtil.FakeItem();
@@ -152,7 +154,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Fields.Should().BeAssignableTo<FieldCollection>();
     }
 
-    [Test]
+    [Fact]
     public void FakeFieldValue_ShouldFake_SpecifiedField()
     {
       var id = ID.NewID;
@@ -168,7 +170,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Fields[name].Value.Should().Be(value);
     }
 
-    [Test]
+    [Fact]
     public void FakeFieldValue_ShouldFake_SpecifiedFieldWithDefaultID()
     {
       var name = "some name";
@@ -183,15 +185,20 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Fields[name].ID.Should().NotBe(ID.Null);
     }
 
-    [Test]
+    [Fact]
     public void FakeFieldValue_ShouldThrow_IfFieldsAreNotFaked()
     {
+      // Arrange
       var item = FakeUtil.FakeItem();
       
-      Assert.Catch<InvalidDataException>(delegate { FakeUtil.FakeFieldValue("test name", "test value", item); });
+      //Act
+      Action attemptToFakeFieldValue = () => FakeUtil.FakeFieldValue("test name", "test value", item);
+
+      // Assert
+      attemptToFakeFieldValue.Should().Throw<InvalidDataException>();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemPaths_ShouldFake_ItemPaths()
     {
       var item = FakeUtil.FakeItem();
@@ -202,7 +209,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Paths.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemAccess_ShouldFakeItemAccess()
     {
       var item = FakeUtil.FakeItem();
@@ -213,7 +220,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Access.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemUri_ShouldFake_ItemUriWithSpecifiedParameters()
     {
       var item = FakeUtil.FakeItem();
@@ -234,7 +241,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       uri.DatabaseName.Should().Be(databaseName);
     }
 
-    [Test]
+    [Fact]
     public void FakeItemUri_ShouldFake_ItemUriWithDefaultValues()
     {
       var uri = FakeUtil.FakeItemUri();
@@ -246,12 +253,12 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       uri.DatabaseName.Should().Be("fakeDatabase");
     }
 
-    [Test]
+    [Fact]
     public void FakeItemUri_ShouldFake_ItemUriWithDateTakenFromItem()
     {
       var item = FakeUtil.FakeItem();
-      FakeUtil.FakeItemLanguage(item);
-      item.Version.Returns(Substitute.For<Sitecore.Data.Version>(5));
+      FakeUtil.FakeItemLanguage(item);      
+      item.Version.Returns(Version.Parse(5));
 
       var uri = FakeUtil.FakeItemUri(item).Uri;
       
@@ -262,7 +269,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       uri.DatabaseName.Should().Be(item.Database.Name);
     }
 
-    [Test]
+    [Fact]
     public void FakeDataUri_ShouldFake_DataUriWithSpecifiedParameters()
     {
       var id = ID.NewID;
@@ -276,7 +283,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       uri.Version.Should().Be(version);
     }
 
-    [Test]
+    [Fact]
     public void FakeDataUri_ShouldFake_DataUriWithDefaultParameters()
     {
       var uri = FakeUtil.FakeDataUri();
@@ -287,7 +294,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       uri.Version.Should().Be(Sitecore.Data.Version.Latest);
     }
 
-    [Test]
+    [Fact]
     public void FakeItemAppearance_ShouldFake_Appearance()
     {
       var item = FakeUtil.FakeItem();
@@ -298,7 +305,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Appearance.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemStatistics_ShouldFake_Statistics()
     {
       var item = FakeUtil.FakeItem();
@@ -309,7 +316,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Statistics.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemTemplate_ShouldFake_ItemTemplate()
     {
       var item = FakeUtil.FakeItem();
@@ -320,7 +327,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Template.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemLinks_ShouldFake_ItemLinks()
     {
       var item = FakeUtil.FakeItem();
@@ -331,7 +338,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Links.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemLocking_ShouldFake_ItemLocking()
     {
       var item = FakeUtil.FakeItem();
@@ -342,7 +349,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Locking.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemVersions_ShouldFake_ItemVersions()
     {
       var item = FakeUtil.FakeItem();
@@ -353,7 +360,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Versions.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemAxes_ShouldFake_ItemAxes()
     {
       var item = FakeUtil.FakeItem();
@@ -364,7 +371,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Axes.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItemEditing_ShouldFake_ItemEditing()
     {
       var item = FakeUtil.FakeItem();

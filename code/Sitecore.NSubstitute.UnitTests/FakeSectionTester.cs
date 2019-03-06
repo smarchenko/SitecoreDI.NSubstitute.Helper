@@ -1,13 +1,12 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 using Sitecore.Data;
 
 namespace Sitecore.NSubstituteUtils.UnitTests
-{
-  [TestFixture]
+{  
   public class FakeSectionTester
   {
-    [Test]
+    [Fact]
     public void FakeSection_DefaultInitialization()
     {
       var template = new FakeTemplate();
@@ -18,7 +17,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       section.Name.Should().Be("fakeSection");
     }
 
-    [Test]
+    [Fact]
     public void FakeSection_EmptyContructor()
     {
       var section = new FakeTemplateSection().ToSitecoreTemplateSection();
@@ -26,7 +25,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       section.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeSection_NonDefaultInitialization()
     {
       string name = "test name";
@@ -38,7 +37,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       section.Name.Should().Be(name);
     }
 
-    [Test]
+    [Fact]
     public void FakeSection_SetIcon()
     {
       string icon = "test icon";
@@ -49,7 +48,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       section.Icon.Should().Be(icon);
     }
 
-    [Test]
+    [Fact]
     public void FakeSection_SetSortorder()
     {
       int sortorder = 42;
@@ -60,7 +59,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       section.Sortorder.Should().Be(sortorder);
     }
 
-    [Test]
+    [Fact]
     public void FakeSection_DefaultGetFields()
     {
       var section = new FakeTemplateSection(new FakeTemplate()).ToSitecoreTemplateSection();
@@ -69,7 +68,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       section.GetFields().Length.Should().Be(0);
     }
 
-    [Test]
+    [Fact]
     public void FakeSection_AddField()
     {
       string name = "test name";

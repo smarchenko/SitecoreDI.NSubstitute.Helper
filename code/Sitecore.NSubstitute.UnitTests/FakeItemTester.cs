@@ -2,7 +2,7 @@
 using System.Linq;
 using FluentAssertions;
 using NSubstitute;
-using NUnit.Framework;
+using Xunit;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Links;
@@ -11,17 +11,16 @@ using Sitecore.Data.Locking;
 namespace Sitecore.NSubstituteUtils.UnitTests
 {
   using Sitecore.Security.AccessControl;
-
-  [TestFixture]
+  
   public class FakeItemTester
   {
-    [Test]
+    [Fact]
     public void FakeItem_CanBeInstantiated()
     {
       var item = new FakeItem();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldInitializeProperties()
     {
       var fakeItem = new FakeItem();
@@ -32,7 +31,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldInitialize_ItemProperties()
     {
       var item = (Item) new FakeItem();
@@ -47,7 +46,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Version.Should().Be(Sitecore.Data.Version.First);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldInitializeField_ByNameIDValue()
     {
       var item = new FakeItem();
@@ -66,7 +65,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       scItem[name].Should().Be(value);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldInitializeField_ByIDValue()
     {
       var item = new FakeItem();
@@ -83,7 +82,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       scItem[id].Should().Be(value);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldInitializeField_ByNameValue()
     {
       var item = new FakeItem();
@@ -100,7 +99,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       scItem[name].Should().Be(value);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldSimplify_StructureCreation()
     {
       var item = new FakeItem();
@@ -122,7 +121,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       scItem.Database.GetItem(childID1).ID.Should().Be(childID1);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldInitialize_Template()
     {
       var templateId = ID.NewID;
@@ -136,7 +135,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       scItem.Database.Engines.TemplateEngine.GetTemplate(templateId).Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldSet_ItemName()
     {
       var name = "my test item";
@@ -147,7 +146,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Name.Should().Be(name);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldReturnFalse_IfNoChildrenAdded()
     {
       var item = new FakeItem().ToSitecoreItem();
@@ -155,7 +154,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.HasChildren.Should().BeFalse();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldReturnTrue_IfChildAdded()
     {
       var item = new FakeItem()
@@ -165,7 +164,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.HasChildren.Should().BeTrue();
     }
     
-    [Test]
+    [Fact]
     public void FakeItem_ShouldAdd_ChildItem()
     {
       var item = new FakeItem();
@@ -174,7 +173,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Children.Count.Should().Be(1);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldInitialize_Paths()
     {
       var item = new FakeItem().ToSitecoreItem();
@@ -182,7 +181,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Paths.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_ItemPath()
     {
       string itemPath = "/test/somepath";
@@ -192,7 +191,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.GetItem(itemPath).Should().Be(item);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_ItemPathSeveralTimes()
     {
       string itemPath1 = "/test/somepath";
@@ -205,7 +204,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       fakeItem.ToSitecoreItem().Database.GetItem(itemPath2).Should().Be(fakeItem.ToSitecoreItem());
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldBePossible_FakeItemAccess()
     {
       var fakeItem = new FakeItem();
@@ -221,7 +220,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Access.CanRead().Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_LanguageByName()
     {
       var fakeItem = new FakeItem()
@@ -233,7 +232,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.GetItem(item.ID, item.Language).Should().Be(item);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_LanguageByNameUsingStringID()
     {
       var fakeItem = new FakeItem()
@@ -245,7 +244,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.GetItem(item.ID.ToString(), item.Language).Should().Be(item);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_LanguageObject()
     {
       var fakeItem = new FakeItem()
@@ -257,7 +256,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.GetItem(item.ID, item.Language).Should().Be(item);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_Uri()
     {
       var fakeItem = new FakeItem();
@@ -277,7 +276,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Database.GetItem(item.Uri.ToDataUri()).Should().Be(item);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_Appearance()
     {
       var item = new FakeItem();
@@ -288,7 +287,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Appearance.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_Statistics()
     {
       var item = new FakeItem();
@@ -299,7 +298,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Statistics.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_Links()
     {
       var item = new FakeItem();
@@ -310,7 +309,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Links.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_Locking()
     {
       var item = new FakeItem();
@@ -321,7 +320,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Locking.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_Versions()
     {
       var item = new FakeItem();
@@ -332,7 +331,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Versions.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_Axes()
     {
       var item = new FakeItem();
@@ -343,7 +342,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Axes.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldFake_ItemEditing()
     {
       var item = new FakeItem();
@@ -354,7 +353,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Editing.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ShouldSupportExtanding_WithExtensionMethods()
     {
       var item = new FakeItem();
@@ -366,7 +365,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Help.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_ItemAccess_SubstitutesObject()
     {
       var item = new FakeItem();
@@ -376,7 +375,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.ToSitecoreItem().Access.Should().Be(access);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultAppearance()
     {
       var item = new FakeItem()
@@ -386,7 +385,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Appearance.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultStatistics()
     {
       var item = new FakeItem()
@@ -396,7 +395,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Statistics.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultLinks()
     {
       var item = new FakeItem()
@@ -406,7 +405,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Links.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultLocking()
     {
       var item = new FakeItem()
@@ -416,7 +415,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Locking.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultVersions()
     {
       var item = new FakeItem()
@@ -426,7 +425,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Versions.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultAxes()
     {
       var item = new FakeItem()
@@ -436,7 +435,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Axes.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultEditing()
     {
       var item = new FakeItem()
@@ -446,7 +445,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Editing.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultBranch()
     {
       var item = new FakeItem()
@@ -456,7 +455,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Branch.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_BranchId()
     {
       var id = ID.NewID;
@@ -467,7 +466,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.BranchId.Should().Be(id);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_Branches()
     {
       var branches = new BranchItem[0];
@@ -478,7 +477,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Branches.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_Created()
     {
       var created = DateTime.UtcNow;
@@ -489,7 +488,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Created.Should().Be(created);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_DisplayName()
     {
       var name = "name";
@@ -500,7 +499,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.DisplayName.Should().Be(name);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_GetNonEmptyClones()
     {
       var clones = new Item[] { new FakeItem().ToSitecoreItem() };
@@ -512,7 +511,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.HasClones.Should().Be(clones.Length > 0);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_GetEmptyClones()
     {
       var clones = new Item[] { };
@@ -524,7 +523,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.HasClones.Should().Be(clones.Length > 0);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_DefaultHelp()
     {
       var item = new FakeItem()
@@ -534,7 +533,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Help.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_IsClone()
     {
       var item = new FakeItem()
@@ -544,7 +543,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.IsClone.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_IsFallback()
     {
       var item = new FakeItem()
@@ -554,7 +553,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.IsFallback.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_Languages()
     {
       var item = new FakeItem()
@@ -566,7 +565,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Languages.Any(x => x.Name == "da").Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_Modified()
     {
       var item = new FakeItem()
@@ -576,7 +575,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Modified.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_OriginatorId()
     {
       var id = ID.NewID;
@@ -587,7 +586,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.OriginatorId.Should().Be(id);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_OriginalLanguage()
     {
       var item = new FakeItem()
@@ -597,7 +596,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.OriginalLanguage.Name.Should().Be("da");
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_OriginalPublishing()
     {
       var item = new FakeItem()
@@ -607,7 +606,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Publishing.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_RuntimeSettings()
     {
       var item = new FakeItem()
@@ -617,7 +616,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.RuntimeSettings.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_Security()
     {
       var item = new FakeItem()
@@ -627,7 +626,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Security.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_Source()
     {
       var source = new FakeItem().ToSitecoreItem();
@@ -638,7 +637,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Source.Should().Be(source);
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_SourceUri()
     {
       var item = new FakeItem()
@@ -648,7 +647,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.SourceUri.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_State()
     {
       var item = new FakeItem()
@@ -658,7 +657,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.State.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_TemplateName()
     {
       var item = new FakeItem()
@@ -668,7 +667,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.TemplateName.Should().Be("name");
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_Visualizations()
     {
       var item = new FakeItem()
@@ -678,7 +677,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.Visualization.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_IsItemClone()
     {
       var item = new FakeItem()
@@ -688,7 +687,7 @@ namespace Sitecore.NSubstituteUtils.UnitTests
       item.IsItemClone.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void FakeItem_Substitutes_SharedFieldSource()
     {
       var source = new FakeItem().ToSitecoreItem();
