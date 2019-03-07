@@ -1,6 +1,10 @@
-﻿using FluentAssertions;
+﻿using AutoFixture.Xunit2;
+using FluentAssertions;
 using NSubstitute;
 using Sitecore.Data;
+using Sitecore.Data.Fields;
+using Sitecore.Data.Items;
+using Sitecore.Data.Templates;
 using Sitecore.NSubstituteUtils;
 using Xunit;
 
@@ -11,14 +15,15 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void DefaultConstructor_ShouldInitialize_UsingDefaultData()
         {
-            var field = new FakeField();
+            Field field = new FakeField();
 
-            field.ToSitecoreField().Should().NotBeNull();
-            var scField = field.ToSitecoreField();
-            scField.ID.Should().NotBeNull();
-            scField.ID.Should().NotBe(ID.Null);
-            scField.Item.Should().NotBeNull();
-            scField.Database.Should().NotBeNull();
+            field.ID.Should()
+                .NotBeNull()
+                .And
+                .NotBe(ID.Null);
+            
+            field.Item.Should().NotBeNull();
+            field.Database.Should().NotBeNull();
         }
 
         [Fact]
@@ -27,165 +32,152 @@ namespace Sitecore.NSubstitute.UnitTests
             var database = Substitute.For<Database>();
             database.Name.Returns("fake db name");
 
-            var field = new FakeField(ID.NewID, new FakeItem(ID.NewID, database)).ToSitecoreField();
+            Field field = new FakeField(ID.NewID, new FakeItem(ID.NewID, database));
             field.Database.Name.Should().Be("fake db name");
         }
 
         [Fact]
-        public void ItemProperty_ReturnedCorrectly()
+        public void ItemProperty_WhenRequested_ReturnsFieldOwnerItem()
         {
-            var item = new FakeItem().ToSitecoreItem();
-            var field = new FakeField(ID.NewID, item).ToSitecoreField();
+            Item fieldOwnerItem = new FakeItem();
 
-            field.Item.Should().Be(item);
+            Field field = new FakeField(ID.NewID, owner: fieldOwnerItem);
+
+            field.Item.Should().Be(fieldOwnerItem);
         }
 
-        [Fact]
-        public void FieldValue_CanBeMocked()
+        [Theory, AutoData]        
+        [InlineData("test value")]
+        public void FieldValue_WhenMocked_ReturnsMockedValue(string fieldValue)
         {
-            var field = new FakeField()
-              .WithValue("test value")
-              .ToSitecoreField();
+            Field field = new FakeField().WithValue(fieldValue);
 
-            field.Value.Should().Be("test value");
+            field.Value.Should().Be(fieldValue);
         }
 
-        [Fact]
-        public void Constructor_AllowsToSetValue()
+        [Theory, AutoData]        
+        [InlineData("test field value")]
+        public void Constructor_WhenReceivesFieldValue_SetsFieldValue(string fieldValue)
         {
-            var field = new FakeField(ID.NewID, "test value", new FakeItem()).ToSitecoreField();
+            Field field = new FakeField(ID.NewID, fieldValue, new FakeItem());
 
-            field.Value.Should().Be("test value");
+            field.Value.Should().Be(fieldValue);
         }
 
-        [Fact]
-        public void FakeItemFields_ShouldBeModified()
+        [Theory, AutoData]
+        public void FakeItemFields_ShouldBeModified(ID fieldId)
         {
-            var item = new FakeItem();
-            item.ToSitecoreItem().Fields.Count.Should().Be(0);
+            var fakeItem = new FakeItem();
+            var item = fakeItem.ToSitecoreItem();
+            item.Fields.Should().BeEmpty();
 
-            var field = new FakeField(ID.NewID, item).ToSitecoreField();
+            Field field = new FakeField(fieldId, fakeItem);
 
-            item.ToSitecoreItem().Fields.Count.Should().Be(1);
-            item.ToSitecoreItem().Fields[field.ID].Should().Be(field);
+            item.Fields.Should().HaveCount(1);                            
+            item.Fields[field.ID].Should().Be(field);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_ValidationText()
+        [Theory, AutoData]        
+        [InlineData("validation text")]
+        public void FakeField_ShouldSubstitute_ValidationText(string validationText)
         {
-            var field = new FakeField()
-              .WithValidationText("some text")
-              .ToSitecoreField();
+            Field field = new FakeField().WithValidationText(validationText);
 
-            field.ValidationText.Should().Be("some text");
+            field.ValidationText.Should().Be(validationText);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Validation()
+        [Theory, AutoData]        
+        [InlineData("validation")]
+        public void FakeField_ShouldSubstitute_Validation(string validation)
         {
-            var field = new FakeField()
-              .WithValidation("validation")
-              .ToSitecoreField();
+            Field field = new FakeField().WithValidation(validation);
 
-            field.Validation.Should().Be("validation");
+            field.Validation.Should().Be(validation);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_Unversioned()
         {
-            var field = new FakeField()
-              .WithUnversioned(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithUnversioned(true);
 
             field.Unversioned.Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_TypeKey()
+        [Theory, AutoData]
+        [InlineData("validation")]
+        public void FakeField_ShouldSubstitute_TypeKey(string typeKey)
         {
-            var field = new FakeField()
-              .WithTypeKey("type key")
-              .ToSitecoreField();
+            Field field = new FakeField().WithTypeKey(typeKey);
 
-            field.TypeKey.Should().Be("type key");
+            field.TypeKey.Should().Be(typeKey);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Type()
+        [Theory, AutoData]        
+        [InlineData("type")]
+        public void FakeField_ShouldSubstitute_Type(string fieldType)
         {
-            var field = new FakeField()
-              .WithType("type")
-              .ToSitecoreField();
-
-            field.Type.Should().Be("type");
+            Field field = new FakeField().WithType(fieldType);
+              
+            field.Type.Should().Be(fieldType);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_Translatable()
         {
-            var field = new FakeField()
-              .WithTranslatable(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithTranslatable(true);
 
             field.Translatable.Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_ToolTip()
+        [Theory, AutoData]
+        [InlineData("tooltip")]
+        public void FakeField_ShouldSubstitute_ToolTip(string toolTip)
         {
-            var field = new FakeField()
-              .WithToolTip("tooltip")
-              .ToSitecoreField();
+            Field field = new FakeField().WithToolTip(toolTip);
 
-            field.ToolTip.Should().Be("tooltip");
+            field.ToolTip.Should().Be(toolTip);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Title()
+        [Theory, AutoData]
+        [InlineData("title")]
+        public void FakeField_ShouldSubstitute_Title(string title)
         {
-            var field = new FakeField()
-              .WithTitle("title")
-              .ToSitecoreField();
+            Field field = new FakeField().WithTitle(title);
 
-            field.Title.Should().Be("title");
+            field.Title.Should().Be(title);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Style()
+        [Theory, AutoData]
+        [InlineData("style")]
+        public void FakeField_ShouldSubstitute_Style(string fieldStyle)
         {
-            var field = new FakeField()
-              .WithStyle("style")
-              .ToSitecoreField();
+            Field field = new FakeField().WithStyle(fieldStyle);
 
-            field.Style.Returns("style");
+            field.Style.Returns(fieldStyle);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Source()
+        [Theory, AutoData]
+        [InlineData("source")]
+        public void FakeField_ShouldSubstitute_Source(string fieldSource)
         {
-            var field = new FakeField()
-              .WithSource("source")
-              .ToSitecoreField();
+            Field field = new FakeField().WithSource(fieldSource);
 
-            field.Source.Should().Be("source");
+            field.Source.Should().Be(fieldSource);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Sortorder()
+        [Theory, AutoData]
+        [InlineData(5)]
+        public void FakeField_ShouldSubstitute_SortOrder(int sortOrder)
         {
-            var field = new FakeField()
-              .WithSortorder(5)
-              .ToSitecoreField();
+            Field field = new FakeField().WithSortorder(sortOrder);
 
-            field.Sortorder.Should().Be(5);
+            field.Sortorder.Should().Be(sortOrder);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_ShouldBeTranslated()
         {
-            var field = new FakeField()
-              .WithShouldBeTranslated(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithShouldBeTranslated(true);
 
             field.ShouldBeTranslated.Should().BeTrue();
         }
@@ -193,112 +185,95 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_Shared()
         {
-            var field = new FakeField()
-              .WithShared(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithShared(true);
 
             field.Shared.Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_SectionSortorder()
+        [Theory, AutoData]
+        [InlineData(5)]
+        public void FakeField_ShouldSubstitute_SectionSortOrder(int sectionSortOrder)
         {
-            var field = new FakeField()
-              .WithSectionSortorder(5)
-              .ToSitecoreField();
+            Field field = new FakeField().WithSectionSortorder(sectionSortOrder);
 
-            field.SectionSortorder.Should().Be(5);
+            field.SectionSortorder.Should().Be(sectionSortOrder);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_SectionNameByUILocale()
+        [Theory, AutoData]
+        [InlineData("name")]
+        public void FakeField_ShouldSubstitute_SectionNameByUILocale(string sectionNameByUiLocale)
         {
-            var field = new FakeField()
-              .WithSectionNameByUILocale("name")
-              .ToSitecoreField();
+            Field field = new FakeField().WithSectionNameByUILocale(sectionNameByUiLocale);
 
-            field.SectionNameByUILocale.Should().Be("name");
+            field.SectionNameByUILocale.Should().Be(sectionNameByUiLocale);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Section()
+        [Theory, AutoData]
+        [InlineData("section")]
+        public void FakeField_ShouldSubstitute_Section(string sectionName)
         {
-            var field = new FakeField()
-              .WithSection("section")
-              .ToSitecoreField();
+            Field field = new FakeField().WithSection(sectionName);
 
-            field.Section.Should().Be("section");
+            field.Section.Should().Be(sectionName);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_ResetBlank()
         {
-            var field = new FakeField()
-              .WithResetBlank(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithResetBlank(true);
 
             field.ResetBlank.Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Name()
+        [Theory, AutoData]
+        [InlineData("name")]
+        public void FakeField_ShouldSubstitute_Name(string fieldName)
         {
-            var field = new FakeField()
-              .WithName("name")
-              .ToSitecoreField();
+            Field field = new FakeField().WithName(fieldName);
 
-            field.Name.Returns("name");
+            field.Name.Returns(fieldName);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_SharedLanguageFallbackEnabled()
         {
-            var field = new FakeField()
-              .WithSharedLanguageFallbackEnabled(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithSharedLanguageFallbackEnabled(true);
 
             field.SharedLanguageFallbackEnabled.Should().BeTrue();
         }
-
-        [Fact]
-        public void FakeField_Shouldsubstitute_Language()
+        
+        [Theory, InlineData("ru-RU")]
+        public void FakeField_ShouldSubstitute_Language(string languageName)
         {
-            var field = new FakeField()
-              .WithLanguage("ru-RU")
-              .ToSitecoreField();
+            Field field = new FakeField().WithLanguage(languageName);
 
-            field.Language.Name.Should().Be("ru-RU");
+            field.Language.Name.Should().Be(languageName);
         }
 
-        [Fact]
-        public void FakeField_ShouldTakeLanguage_FromItem()
+        [Theory, InlineData("ru-RU")]
+        public void FakeField_ShouldTakeLanguage_FromItem(string languageName)
         {
-            var item = new FakeItem()
-              .WithLanguage("ru-RU")
-              .ToSitecoreItem();
+            var item = new FakeItem().WithLanguage(languageName).ToSitecoreItem();
 
-            var field = new FakeField(owner: item)
-              .ToSitecoreField();
+            Field field = new FakeField(owner: item)
+              ;
 
-            field.Language.Name.Should().Be("ru-RU");
+            field.Language.Name.Should().Be(languageName);
         }
 
-        [Fact]
-        public void FakeItem_ShouldSubstitiute_Key()
+        [Theory, AutoData]
+        [InlineData("key")]
+        public void FakeItem_ShouldSubstitute_Key(string key)
         {
-            var field = new FakeField()
-              .WithKey("key")
-              .ToSitecoreField();
+            Field field = new FakeField().WithKey(key);
 
-            field.Key.Returns("key");
+            field.Key.Returns(key);
         }
 
         [Fact]
         public void FakeItem_ShouldSubstitute_IsModified()
         {
-            var field = new FakeField()
-              .WithIsModified(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithIsModified(true);
 
             field.IsModified.Should().BeTrue();
         }
@@ -306,39 +281,33 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_IsBlobField()
         {
-            var field = new FakeField()
-              .WithIsBlobField(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithIsBlobField(true);
 
             field.IsBlobField.Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_InheritedValue()
+        [Theory, AutoData]
+        [InlineData("inherited value")]
+        public void FakeField_ShouldSubstitute_InheritedValue(string inheritedValue)
         {
-            var field = new FakeField()
-              .WithInheritedValue("value")
-              .ToSitecoreField();
+            Field field = new FakeField().WithInheritedValue(inheritedValue);
 
-            field.InheritedValue.Should().Be("value");
+            field.InheritedValue.Should().Be(inheritedValue);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitiute_HelpLink()
+        [Theory, AutoData]
+        [InlineData("help link")]
+        public void FakeField_ShouldSubstitute_HelpLink(string helpLink)
         {
-            var field = new FakeField()
-              .WithHelpLink("link")
-              .ToSitecoreField();
+            Field field = new FakeField().WithHelpLink(helpLink);
 
-            field.HelpLink.Should().Be("link");
+            field.HelpLink.Should().Be(helpLink);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_HasValue()
         {
-            var field = new FakeField()
-              .WithHasValue(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithHasValue(true);
 
             field.HasValue.Should().BeTrue();
         }
@@ -346,63 +315,55 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_HasBlobStream()
         {
-            var field = new FakeField()
-              .WithHasBlobStream(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithHasBlobStream(true);
 
             field.HasBlobStream.Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_SectionDisplayName()
+        [Theory, AutoData]
+        [InlineData("section display name")]
+        public void FakeField_ShouldSubstitute_SectionDisplayName(string sectionDisplayName)
         {
-            var field = new FakeField()
-              .WithSectionDisplayName("name")
-              .ToSitecoreField();
+            Field field = new FakeField().WithSectionDisplayName(sectionDisplayName);
 
-            field.SectionDisplayName.Should().Be("name");
+            field.SectionDisplayName.Should().Be(sectionDisplayName);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_DisplayName()
+        [Theory, AutoData]
+        [InlineData("field display name")]
+        public void FakeField_ShouldSubstitute_DisplayName(string fieldDisplayName)
         {
-            var field = new FakeField()
-              .WithDisplayName("name")
-              .ToSitecoreField();
+            Field field = new FakeField().WithDisplayName(fieldDisplayName);
 
-            field.DisplayName.Should().Be("name");
+            field.DisplayName.Should().Be(fieldDisplayName);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Description()
+        [Theory, AutoData]
+        [InlineData("field description")]
+        public void FakeField_ShouldSubstitute_Description(string description)
         {
-            var field = new FakeField()
-              .WithDescription("description")
-              .ToSitecoreField();
+            Field field = new FakeField().WithDescription(description);
 
-            field.Description.Should().Be("description");
+            field.Description.Should().Be(description);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_Definition()
         {
-            var field = new FakeField()
-              .WithDefinition()
-              .ToSitecoreField();
+            Field field = new FakeField().WithDefinition();
 
             field.Definition.Should().NotBeNull();
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_Definition1()
+        [Theory, InlineAutoData("fake section name", "fake template field name")]
+        [AutoData]
+        public void FakeField_ShouldSubstitute_Definition1(string sectionName, string fieldName, ID sectionId, ID fieldId)
         {
             var template = new FakeTemplate();
-            var section = new FakeTemplateSection(template, "fakeSection", ID.NewID);
-            var templateField = new FakeTemplateField(section, "fakeName", ID.NewID).ToSitecoreTemplateField();
+            var section = new FakeTemplateSection(template, sectionName, sectionId);
+            TemplateField templateField = new FakeTemplateField(section, fieldName, fieldId);
 
-            var field = new FakeField()
-              .WithDefinition(templateField)
-              .ToSitecoreField();
+            Field field = new FakeField().WithDefinition(templateField);
 
             field.Definition.Should().Be(templateField);
         }
@@ -410,31 +371,26 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_InnerItem()
         {
-            var item = new FakeItem().ToSitecoreItem();
-            var field = new FakeField()
-              .WithInnerItem(item)
-              .ToSitecoreField();
+            Item item = new FakeItem();
+            Field field = new FakeField().WithInnerItem(item);
 
             field.InnerItem.Should().Be(item);
-            field.Database.GetItem(field.ID, null).Should().Be(item);
+            field.Database.GetItem(field.ID, language: null).Should().Be(item);
         }
 
-        [Fact]
-        public void FakeField_ShouldSubstitute_FallbackValueSource()
+        [Theory, AutoData]
+        [InlineData("fallback value source")]
+        public void FakeField_ShouldSubstitute_FallbackValueSource(string source)
         {
-            var field = new FakeField()
-              .WithFallbackValueSource("source")
-              .ToSitecoreField();
+            Field field = new FakeField().WithFallbackValueSource(source);
 
-            field.FallbackValueSource.Should().Be("source");
+            field.FallbackValueSource.Should().Be(source);
         }
 
         [Fact]
         public void FakeField_ShouldSubstitute_InheritsValueFromOtherItem()
         {
-            var field = new FakeField()
-              .WithInheritsValueFromOtherItem(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithInheritsValueFromOtherItem(true);
 
             field.InheritsValueFromOtherItem.Should().BeTrue();
         }
@@ -442,9 +398,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_ContainsFallbackValue()
         {
-            var field = new FakeField()
-              .WithContainsFallbackValue(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithContainsFallbackValue(true);
 
             field.ContainsFallbackValue.Should().BeTrue();
         }
@@ -452,9 +406,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_ContainsStandardValue()
         {
-            var field = new FakeField()
-              .WithContainsStandardValue(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithContainsStandardValue(true);
 
             field.ContainsStandardValue.Should().BeTrue();
         }
@@ -462,9 +414,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_CanWrite()
         {
-            var field = new FakeField()
-              .WithCanWrite(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithCanWrite(true);
 
             field.CanWrite.Should().BeTrue();
         }
@@ -472,9 +422,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void FakeField_ShouldSubstitute_CanRead()
         {
-            var field = new FakeField()
-              .WithCanRead(true)
-              .ToSitecoreField();
+            Field field = new FakeField().WithCanRead(true);
 
             field.CanRead.Should().BeTrue();
         }
