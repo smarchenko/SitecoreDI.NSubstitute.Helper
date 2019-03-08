@@ -24,7 +24,7 @@ Example:
       var childID2 = ID.NewID;
       var scItem = (Item)item;
       
-      // create fake item with soecified parent and 2 children
+      // create fake item with specified parent and 2 children
       item
         .WithParent(new FakeItem(parentID))
         .WithChild(new FakeItem(childID1, scItem.Database))
@@ -57,7 +57,7 @@ Example:
 More examples your can find [here](https://github.com/smarchenko/SitecoreDI.NSubstitute.Helper/blob/master/code/Sitecore.NSubstitute.UnitTests/FakeItemTester.cs)
 
 ## Simple substitutes
-FakeUtil class ha s anumber of simple methods that show how to fake some Sitecore classes or parts of the Item class. This class has been created just for demo purpose. I would recommend to use FakeItem class in your test projects since it is much more powerful one and simplifies creation of item structures. 
+FakeUtil class has a number of simple methods that show how to fake some Sitecore classes or parts of the Item class. This class has been created just for demo purpose. I would recommend to use FakeItem class in your test projects since it is much more powerful one and simplifies creation of item structures. 
 
 Example for creating a fake item object:
 ```C#
@@ -85,7 +85,7 @@ The project also contains additional API that might be useful for testing the co
 
 **Note**: it is strongly recommended not to use this API and update the code to use DI instead. If this is not possible, please consider to extract usages of Sitecore statics to a separate virtual methods, so that they can be substituted in pure Unit Tests using proxy classes. 
 
-If these optoions do not work for your solution, then you can try to use the FakeServiceProviderWrapper class that is designed to help in this case. However, you should remember that this solution must be temporary and code must be updated ASAP.
+If these options do not work for your solution, then you can try to use the FakeServiceProviderWrapper class that is designed to help in this case. However, you should remember that this solution must be temporary and code must be updated ASAP.
 
 Code below substitutes the default implementation of BaseItemManger with an own one that will be grabbed by static ItemManager class:
 ```C#
