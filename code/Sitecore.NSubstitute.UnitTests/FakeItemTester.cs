@@ -5,8 +5,6 @@ using FluentAssertions;
 using NSubstitute;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Data.Locking;
-using Sitecore.Links;
 using Sitecore.NSubstituteUtils;
 using Sitecore.Security.AccessControl;
 using Xunit;
@@ -55,7 +53,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_WhenCastedToSitecoreItem_ReturnsInstance()
+        public void FakeItem_WhenCastedToSitecoreItem_ReturnsItemInstance()
         {
             // Arrange
             var fakeItem = new FakeItem();
@@ -66,21 +64,74 @@ namespace Sitecore.NSubstitute.UnitTests
             // Assert
             item.Should().NotBeNull();
         }
-
+        #region Default creation
         [Fact]
-        public void FakeItem_ShouldInitialize_ItemProperties()
+        public void Constructor_WhenCalled_HasItemFields()
         {
             Item item = new FakeItem();
 
             item.Fields.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_HasTemplateSet()
+        {
+            Item item = new FakeItem();
+
+
             item.Template.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_HasChildrenPropertyInitialized()
+        {
+            Item item = new FakeItem();
+
             item.Children.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_HasZeroChildren()
+        {
+            Item item = new FakeItem();
+
             item.Children.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_HasDatabaseSet()
+        {
+            Item item = new FakeItem();
+
             item.Database.Should().NotBeNull();
-            item.Database.GetItem(item.ID).Should().Be(item);
+        }
+
+        [Theory, AutoData]
+        public void Constructor_WhenCalled_ConfiguresDatabaseToFindSelfById(ID itemId)
+        {
+            Item item = new FakeItem(itemId);
+
+            var actualItem = item.Database.GetItem(itemId);
+
+            actualItem.Should().BeSameAs(item);
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_HasInvariantLanguage()
+        {
+            Item item = new FakeItem();
+
             item.Language.Should().Be(Globalization.Language.Invariant);
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_HasFirstVersion()
+        {
+            Item item = new FakeItem();
+
             item.Version.Should().Be(Sitecore.Data.Version.First);
         }
+        #endregion
 
         [Theory, InlineAutoData("test field", "test value")]
         public void FieldIndexerByFieldId_AfterAdd_ReturnsAddedValue(string fieldName, string addedFieldValue, ID fieldId)
@@ -206,7 +257,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, AutoData]
-        public void FakeItem_ShouldSimplify_StructureCreation(ID firstChild, ID secondChild)
+        public void WithChild_WhenCalled_CreatesChildItems(ID firstChild, ID secondChild)
         {
             var item = new FakeItem();
 
@@ -221,19 +272,50 @@ namespace Sitecore.NSubstitute.UnitTests
             scItem.Database.GetItem(firstChild).ID.Should().Be(firstChild);
         }
 
-        [Fact]
-        public void FakeItem_ShouldInitialize_Template()
-        {
-            var templateId = ID.NewID;
-            var item = new FakeItem().WithTemplate(templateId);
+        #region WithTemplate tests
 
-            var scItem = (Item)item;
-            scItem.Template.Should().NotBeNull();
-            scItem.TemplateID.Should().Be(templateId);
-            scItem.Template.ID.Should().Be(templateId);
-            scItem.Database.GetTemplate(templateId).Should().NotBeNull();
-            scItem.Database.Engines.TemplateEngine.GetTemplate(templateId).Should().NotBeNull();
+        [Theory, AutoData]
+        public void WithTemplate_WhenCalled_SetsItemTemplateIdToConfigured(ID templateId)
+        {
+            Item item = new FakeItem().WithTemplate(templateId);
+
+            item.Template.ID.Should().Be(templateId);
         }
+
+        [Theory, AutoData]
+        public void WithTemplate_WhenCalled_CreatesItemTemplate(ID templateId)
+        {
+            Item item = new FakeItem().WithTemplate(templateId);
+
+            item.Template.Should().NotBeNull();
+        }
+
+        [Theory, AutoData]
+        public void WithTemplate_WhenCalled_ConfiguresItemDatabaseToFindItemTemplate(ID templateId)
+        {
+            // Arrange
+            Item item = new FakeItem().WithTemplate(templateId);
+
+            // Act
+            var itemTemplate = item.Database.GetTemplate(templateId);
+
+            // Assert
+            itemTemplate.Should().NotBeNull();
+        }
+
+        [Theory, AutoData]
+        public void WithTemplate_WhenCalled_ConfiguresTemplateEngineToFindItemTemplate(ID templateId)
+        {
+            // Arrange
+            Item item = new FakeItem().WithTemplate(templateId);
+
+            // Act
+            var itemTemplate = item.Database.Engines.TemplateEngine.GetTemplate(templateId);
+
+            // Assert
+            itemTemplate.Should().NotBeNull();
+        }
+        #endregion
 
         [Theory, InlineData("my test item")]
         [AutoData]
@@ -276,7 +358,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_WhenCreated_DefinesItemPaths()
+        public void Constructor_WhenCalled_DefinesItemPaths()
         {
             Item item = new FakeItem();
 
@@ -286,7 +368,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Theory, InlineData("/test/somepath")]
         [AutoData]
         public void WithPath_WhenFullPathRequested_ReturnsItemPath(string itemPath)
-        {             
+        {
             Item item = new FakeItem().WithPath(itemPath);
 
             item.Paths.FullPath.Should().Be(itemPath);
@@ -306,69 +388,93 @@ namespace Sitecore.NSubstitute.UnitTests
             itemByPath.Should().Be(item);
         }
 
-        [Fact]
-        public void FakeItem_ShouldFake_ItemPathSeveralTimes()
+        [Theory, InlineData("/test/somepath", "/test/anotherPath")]
+        public void WithPath_WhenCalledMultipleTime_PreservesLaterPath(string originalPath, string laterPath)
         {
-            string itemPath1 = "/test/somepath";
-            string itemPath2 = "/test/somepath";
-            var fakeItem = new FakeItem().WithPath(itemPath1);
+            // Arrange
+            Item item = new FakeItem()
+                .WithPath(originalPath)
+                .WithPath(laterPath);
 
-            fakeItem.ToSitecoreItem().Paths.FullPath.Should().Be(itemPath1);
-            fakeItem.WithPath(itemPath2);
-            fakeItem.ToSitecoreItem().Paths.FullPath.Should().Be(itemPath2);
-            fakeItem.ToSitecoreItem().Database.GetItem(itemPath2).Should().Be(fakeItem.ToSitecoreItem());
+            // Act
+            var actualFullPath = item.Paths.FullPath;
+
+            // Assert
+            actualFullPath.Should().Be(laterPath);
+        }
+
+        [Theory, InlineData("/test/somepath", "/test/anotherPath")]
+        public void WithPath_WhenCalledMultipleTime_ConfiguresDatabaseToFindItemByLaterPath(string originalPath, string laterPath)
+        {
+            // Arrange
+            Item item = new FakeItem()
+                .WithPath(originalPath)
+                .WithPath(laterPath);
+
+            // Act
+            var actualItem = item.Database.GetItem(laterPath);
+
+            // Assert
+            actualItem.Should().BeSameAs(item);
         }
 
         [Fact]
-        public void FakeItem_ShouldBePossible_FakeItemAccess()
+        public void Constructor_WhenCalled_DoesNotCreateItemAccess()
         {
-            var fakeItem = new FakeItem();
+            Item item = new FakeItem();
 
-            fakeItem.ToSitecoreItem().Access.Should().BeNull();
+            item.Access.Should().BeNull();
+        }
 
-            fakeItem.WithItemAccess();
-            fakeItem.ToSitecoreItem().Access.Should().NotBeNull();
+        [Fact]
+        public void WithItemAccess_WhenCalled_LetsMockItemAccess()
+        {
+            // Arrange
+            Item item = new FakeItem().WithItemAccess();
 
-            var item = fakeItem.ToSitecoreItem();
             item.Access.CanRead().Returns(true);
 
-            item.Access.CanRead().Should().BeTrue();
+            // Act
+            var actualCanRead = item.Access.CanRead();
+
+            // Assert
+            actualCanRead.Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeItem_ShouldFake_LanguageByName()
+        [Theory, InlineData("en-US")]
+        public void WithLanguage_WhenCalledWithLanguageName_SetsItemLanguage(string languageName)
         {
-            var fakeItem = new FakeItem()
-                            .WithLanguage("en-US");
+            Item item = new FakeItem().WithLanguage(languageName);
 
-            var item = fakeItem.ToSitecoreItem();
-            item.Language.Should().NotBeNull();
-            item.Language.Name.Should().Be("en-US");
-            item.Database.GetItem(item.ID, item.Language).Should().Be(item);
+            item.Language.Name.Should().Be(languageName);
         }
 
-        [Fact]
-        public void FakeItem_ShouldFake_LanguageByNameUsingStringID()
+        [Theory, InlineData("en-US")]
+        public void WithLanguage_WhenCalledWithLanguageName_ConfiguresDatabaseToFindItemByIdInLanguage(string languageName)
         {
-            var fakeItem = new FakeItem()
-                            .WithLanguage("en-US");
+            Item item = new FakeItem().WithLanguage(languageName);
 
-            var item = fakeItem.ToSitecoreItem();
-            item.Language.Should().NotBeNull();
-            item.Language.Name.Should().Be("en-US");
-            item.Database.GetItem(item.ID.ToString(), item.Language).Should().Be(item);
+            var actualItem = item.Database.GetItem(item.ID, item.Language);
+
+            actualItem.Should().Be(item);
         }
 
-        [Fact]
-        public void FakeItem_ShouldFake_LanguageObject()
+        [Theory, InlineData("en-US")]
+        public void WithLanguage_WhenCalled_SetsItemLanguage(string languageName)
         {
-            var fakeItem = new FakeItem()
-                            .WithLanguage(Sitecore.Globalization.Language.Parse("en-US"));
+            Item item = new FakeItem().WithLanguage(Globalization.Language.Parse(languageName));
 
-            var item = fakeItem.ToSitecoreItem();
-            item.Language.Should().NotBeNull();
-            item.Language.Name.Should().Be("en-US");
-            item.Database.GetItem(item.ID, item.Language).Should().Be(item);
+            item.Language.Name.Should().Be(languageName);
+        }
+
+        [Theory, InlineData("en-US")]
+        public void WithLanguage_WhenCalled_ConfiguresDatabaseToFindItemByIdInLanguage(string languageName)
+        {
+            Item item = new FakeItem().WithLanguage(Globalization.Language.Parse(languageName));
+
+            var actualItem = item.Database.GetItem(item.ID, item.Language);
+
+            actualItem.Should().Be(item);
         }
 
         [AutoData]
@@ -392,7 +498,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_WhenCreated_HasNoAppearance()
+        public void Constructor_WhenCalled_HasNoAppearance()
         {
             Item item = new FakeItem();
 
@@ -411,44 +517,46 @@ namespace Sitecore.NSubstitute.UnitTests
             // Act
             fakeItem.WithAppearance(appearance);
 
+            // Assert
             item.Appearance.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_ShouldFake_Statistics()
+        public void Constructor_WhenCalled_HasNoStatistics()
+        {
+            Item item = new FakeItem();
+
+            item.Statistics.Should().BeNull();
+        }
+
+        [Fact]
+        public void WithStatistics_WhenCalled_CreatesStatistics()
         {
             var item = new FakeItem();
 
-            item.ToSitecoreItem().Statistics.Should().BeNull();
-            item.WithStatistics(Substitute.For<ItemStatistics>(item.ToSitecoreItem()));
+            item.WithStatistics();
 
             item.ToSitecoreItem().Statistics.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_ShouldFake_Links()
+        public void Constructor_WhenCalled_HasNoLinks()
         {
-            var item = new FakeItem();
+            Item item = new FakeItem();
 
-            item.ToSitecoreItem().Links.Should().BeNull();
-            item.WithItemLinks(Substitute.For<ItemLinks>(item.ToSitecoreItem()));
-
-            item.ToSitecoreItem().Links.Should().NotBeNull();
+            item.Links.Should().BeNull();
         }
 
         [Fact]
-        public void FakeItem_ShouldFake_Locking()
+        public void Constructor_WhenCalled_HasNoLocking()
         {
-            var item = new FakeItem();
+            Item item = new FakeItem();
 
-            item.ToSitecoreItem().Locking.Should().BeNull();
-            item.WithItemLocking(Substitute.For<ItemLocking>(item.ToSitecoreItem()));
-
-            item.ToSitecoreItem().Locking.Should().NotBeNull();
+            item.Locking.Should().BeNull();
         }
 
         [Fact]
-        public void FakeItem_ShouldFake_Versions()
+        public void WithItemVersions_WhenCalled_SetsItemVersions()
         {
             var item = new FakeItem();
 
@@ -459,7 +567,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_ShouldFake_Axes()
+        public void WithItemAxes_WhenCalled_SetsItemAxes()
         {
             var fakeItem = new FakeItem();
             Item item = fakeItem;
@@ -467,13 +575,11 @@ namespace Sitecore.NSubstitute.UnitTests
 
             fakeItem.WithItemAxes(stubItemAxes);
 
-            item.Axes
-                .Should().NotBeNull()
-                .And.Be(stubItemAxes);
+            item.Axes.Should().Be(stubItemAxes);
         }
 
         [Fact]
-        public void FakeItem_WhenCreated_HasNoAxes()
+        public void Constructor_WhenCalled_HasNoAxes()
         {
             Item item = new FakeItem();
 
@@ -481,18 +587,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_ShouldFake_ItemEditing()
-        {
-            var item = new FakeItem();
-
-            item.ToSitecoreItem().Editing.Should().BeNull();
-            item.WithItemEditing(Substitute.For<ItemEditing>(item.ToSitecoreItem()));
-
-            item.ToSitecoreItem().Editing.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void FakeItem_WhenCreated_DoesNotCreateHelp()
+        public void Constructor_WhenCalled_DoesNotCreateHelp()
         {
             Item item = new FakeItem();
 
@@ -503,15 +598,16 @@ namespace Sitecore.NSubstitute.UnitTests
         public void WithHelp_WhenCalled_CreatesItemHelp()
         {
             Item item = new FakeItem().WithHelp();
-  
+
             item.Help.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_ItemAccess_SubstitutesObject()
+        public void WithItemAccess_WhenCalled_SetsItemAccess()
         {
             var item = new FakeItem();
             var access = Substitute.For<ItemAccess>(item.ToSitecoreItem());
+
             item.WithItemAccess(access);
 
             item.ToSitecoreItem().Access.Should().Be(access);
@@ -526,21 +622,17 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_DefaultStatistics()
+        public void WithStatistics_WhenCalled_CreatesItemStatistics()
         {
-            var item = new FakeItem()
-              .WithStatistics()
-              .ToSitecoreItem();
+            Item item = new FakeItem().WithStatistics();
 
             item.Statistics.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_DefaultLinks()
+        public void WithItemLinks_WhenCalled_CreatesItemLinks()
         {
-            var item = new FakeItem()
-              .WithItemLinks()
-              .ToSitecoreItem();
+            Item item = new FakeItem().WithItemLinks();
 
             item.Links.Should().NotBeNull();
         }
@@ -554,27 +646,23 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_DefaultVersions()
+        public void WithItemVersions_WhenCalled_CreatesItemVersions()
         {
-            var item = new FakeItem()
-              .WithItemVersions()
-              .ToSitecoreItem();
+            Item item = new FakeItem().WithItemVersions();
 
             item.Versions.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_DefaultAxes()
+        public void WithItemAxes_WhenCalled_CreatesItemAxes()
         {
-            var item = new FakeItem()
-              .WithItemAxes()
-              .ToSitecoreItem();
+            Item item = new FakeItem().WithItemAxes();
 
             item.Axes.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_DefaultEditing()
+        public void WithItemEditing_WhenCalled_CreatesItemEditing()
         {
             Item item = new FakeItem().WithItemEditing();
 
@@ -582,7 +670,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_DefaultBranch()
+        public void WithBranch_WhenCalled_CreatesItemBranch()
         {
             Item item = new FakeItem().WithBranch();
 
@@ -590,7 +678,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, AutoData]
-        public void FakeItem_Substitutes_BranchId(ID branchId)
+        public void WithBranchId_WhenCalled_SetsItemBranchId(ID branchId)
         {
             Item item = new FakeItem().WithBranchId(branchId);
 
@@ -598,17 +686,16 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_Substitutes_Branches()
+        public void WithBranches_WhenCalled_SetsItemBranches()
         {
             var branches = Array.Empty<BranchItem>();
-            Item item = new FakeItem()
-                .WithBranches(branches);
+            Item item = new FakeItem().WithBranches(branches);
 
             item.Branches.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_Substitutes_Created()
+        public void WithCreated_WhenCalled_SetsItemCreated()
         {
             var created = DateTime.UtcNow;
             Item item = new FakeItem().WithCreated(created);
@@ -617,130 +704,162 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, InlineData("display name")]
-        public void FakeItem_Substitutes_DisplayName(string displayName)
+        public void WithDisplayName_WhenCalled_SetsDisplayName(string displayName)
         {
             Item item = new FakeItem().WithDisplayName(displayName);
 
             item.DisplayName.Should().Be(displayName);
         }
 
-        [Fact]
-        public void FakeItem_Substitutes_GetNonEmptyClones()
+        [Theory, AutoData]
+        public void WithGetClones_WhenMultipleClones_ConfiguresHasClonesReturnTrue(int cloneCount)
         {
-            var clones = new Item[] { new FakeItem().ToSitecoreItem() };
+            var reducedCloneCount = cloneCount % 7 + 2;
+
+            var clones = from _ in Enumerable.Range(0, reducedCloneCount)
+                         let fakeClone = new FakeItem()
+                         select fakeClone.ToSitecoreItem();
+
+            // Arrange
             Item item = new FakeItem().WithGetClones(clones);
 
-            item.GetClones().Count().Should().Be(clones.Length);
-            item.HasClones.Should().Be(clones.Length > 0);
-        }
+            // Act
+            var hasClonesActual = item.HasClones;
 
-        [Fact]
-        public void FakeItem_Substitutes_GetEmptyClones()
-        {
-            var clones = Array.Empty<Item>();
-            Item item = new FakeItem()
-              .WithGetClones(clones);
-
-            item.GetClones().Count().Should().Be(clones.Length);
-            item.HasClones.Should().Be(clones.Length > 0);
-        }
-
-        [Fact]
-        public void FakeItem_DefaultHelp()
-        {
-            Item item = new FakeItem().WithHelp();
-
-            item.Help.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void FakeItem_Substitutes_IsClone()
-        {
-            Item item = new FakeItem().WithIsClone(true);
-
-            item.IsClone.Should().BeTrue();
-        }
-
-        [Fact]
-        public void FakeItem_Substitutes_IsFallback()
-        {
-            var item = new FakeItem()
-              .WithIsFallback(true)
-              .ToSitecoreItem();
-
-            item.IsFallback.Should().BeTrue();
-        }
-
-        [Fact]
-        public void FakeItem_Substitutes_Languages()
-        {
-            var item = new FakeItem()
-              .WithLanguages(new[] { "en", "da" })
-              .ToSitecoreItem();
-
-            item.Languages.Length.Should().Be(2);
-            item.Languages.Any(x => x.Name == "en").Should().BeTrue();
-            item.Languages.Any(x => x.Name == "da").Should().BeTrue();
-        }
-
-        [Fact]
-        public void FakeItem_Substitutes_Modified()
-        {
-            var item = new FakeItem()
-              .WithModified(true)
-              .ToSitecoreItem();
-
-            item.Modified.Should().BeTrue();
+            // Assert
+            hasClonesActual.Should().BeTrue();
         }
 
         [Theory, AutoData]
-        public void FakeItem_Substitutes_OriginatorId(ID originatorId)
+        public void WithGetClones_WhenMultipleClones_GetClonesReturnedConfigured(int cloneCount)
         {
-            Item item = new FakeItem()
-                .WithOriginatorId(originatorId);
+            var reducedCloneCount = cloneCount % 7 + 2;
+
+            var clones = (from _ in Enumerable.Range(0, reducedCloneCount)
+                          let fakeClone = new FakeItem()
+                          select fakeClone.ToSitecoreItem())
+                .ToList();
+
+            // Arrange
+            Item item = new FakeItem().WithGetClones(clones);
+
+            // Act
+            var actualClones = item.GetClones();
+
+            // Assert
+            actualClones
+                .Should().BeSubsetOf(clones)
+                .And.HaveSameCount(clones);
+        }
+
+        [Fact]
+        public void WithGetClones_WhenCalled_ConfiguresItemGetClones()
+        {
+            var clones = Array.Empty<Item>();
+            Item item = new FakeItem().WithGetClones(clones);
+
+            item.GetClones().Should().BeEmpty();
+            item.HasClones.Should().BeFalse();
+        }
+
+        [Fact]
+        public void WithGetClones_WhenCalled_ConfiguresHasClones()
+        {
+            var clones = Array.Empty<Item>();
+            Item item = new FakeItem().WithGetClones(clones);
+
+            item.HasClones.Should().BeFalse();
+        }
+
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithIsClone_WhenCalled_SetsConfiguredValue(bool isCloneConfigured)
+        {
+            // Arrange
+            Item item = new FakeItem().WithIsClone(isCloneConfigured);
+
+            // Act
+            var isCloneActual = item.IsClone;
+
+            // Assert
+            isCloneActual.Should().Be(isCloneConfigured);
+        }
+
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithIsFallback_WhenCalled_SetsIsFallbackToConfiguredValue(bool isFallbackConfigured)
+        {
+            // Arrange
+            Item item = new FakeItem().WithIsFallback(isFallbackConfigured);
+
+            // Act
+            var isFallbackActual = item.IsFallback;
+
+            // Assert
+            isFallbackActual.Should().Be(isFallbackConfigured);
+        }
+
+        [Theory, InlineData("en","da")]
+        public void WithLanguages_WhenCalled_SetsItemLanguages(string unoLanguage, string dosLanguage)
+        {
+            Item item = new FakeItem().WithLanguages(new[] {unoLanguage, dosLanguage });
+
+            item.Languages
+                .Should().HaveCount(2)
+                .And.ContainSingle(language => language.Name == unoLanguage)
+                .And.ContainSingle(language => language.Name == dosLanguage);
+        }
+
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithModified_WhenCalled_SetsModifiedToConfiguredValue(bool isModifiedConfigured)
+        {
+            Item item = new FakeItem().WithModified(isModifiedConfigured);
+
+            var isModifiedActual = item.Modified;
+
+            isModifiedActual.Should().Be(isModifiedConfigured);
+        }
+
+        [Theory, AutoData]
+        public void WithOriginatorId_WhenCalled_SetsItemOriginationId(ID originatorId)
+        {
+            Item item = new FakeItem().WithOriginatorId(originatorId);
 
             item.OriginatorId.Should().Be(originatorId);
         }
 
         [Theory, InlineData("da")]
-        public void FakeItem_Substitutes_OriginalLanguage(string originalLanguage)
+        public void WithOriginalLanguage_WhenCalled_SetsItemOriginalLanguage(string originalLanguage)
         {
-            Item item = new FakeItem()
-              .WithOriginalLanguage(originalLanguage);
+            Item item = new FakeItem().WithOriginalLanguage(originalLanguage);
 
             item.OriginalLanguage.Name.Should().Be(originalLanguage);
         }
 
         [Fact]
-        public void FakeItem_Substitutes_OriginalPublishing()
+        public void WithPublishing_WhenCalled_CreatesItemPublishing()
         {
-            var item = new FakeItem()
-              .WithPublishing()
-              .ToSitecoreItem();
+            Item item = new FakeItem().WithPublishing();
 
             item.Publishing.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_Substitutes_RuntimeSettings()
+        public void WithRuntimeSettings_WhenCalled_CreatesItemRuntimeSettings()
         {
-            Item item = new FakeItem()
-              .WithRuntimeSettings();
+            Item item = new FakeItem().WithRuntimeSettings();
 
             item.RuntimeSettings.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_Substitutes_Security()
+        public void WithSecurity_WhenCalled_CreatesItemSecurity()
         {
-            Item item = new FakeItem()
-              .WithSecurity();
+            Item item = new FakeItem().WithSecurity();
 
             item.Security.Should().NotBeNull();
         }
 
         [Fact]
-        public void FakeItem_Substitutes_Source()
+        public void WithSource_WhenCalled_SetsSourceToReturnConfiguredValue()
         {
             Item source = new FakeItem();
             Item item = new FakeItem().WithSource(source);
@@ -749,7 +868,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_Substitutes_SourceUri()
+        public void WithSourceUri_WhenCalled_SetsItemSourceUri()
         {
             Item item = new FakeItem().WithSourceUri();
 
@@ -757,7 +876,7 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_Substitutes_State()
+        public void WithState_WhenCalled_CreatesItemState()
         {
             Item item = new FakeItem().WithState();
 
@@ -766,38 +885,37 @@ namespace Sitecore.NSubstitute.UnitTests
 
         [Theory, AutoData]
         [InlineData("template name")]
-        public void FakeItem_Substitutes_TemplateName(string templateName)
+        public void WithTemplateName_WhenCalled_SetsItemTemplateName(string templateName)
         {
-            Item item = new FakeItem()
-              .WithTemplateName(templateName);
+            Item item = new FakeItem().WithTemplateName(templateName);
 
             item.TemplateName.Should().Be(templateName);
         }
 
         [Fact]
-        public void FakeItem_Substitutes_Visualizations()
+        public void WithVisualization_WhenCalled_CreatesItemVisualization()
         {
-            Item item = new FakeItem()
-              .WithVisualization();
+            Item item = new FakeItem().WithVisualization();
 
             item.Visualization.Should().NotBeNull();
         }
 
-        [Fact]
-        public void FakeItem_Substitutes_IsItemClone()
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithIsItemClone_WhenCalled_SetsIsItemClone(bool isItemCloneConfigured)
         {
-            Item item = new FakeItem().WithIsItemClone(true);
+            Item item = new FakeItem().WithIsItemClone(isItemCloneConfigured);
 
-            item.IsItemClone.Should().BeTrue();
+            var actualIsItemClone = item.IsItemClone;
+
+            actualIsItemClone.Should().Be(isItemCloneConfigured);
         }
 
         [Fact]
-        public void FakeItem_Substitutes_SharedFieldSource()
+        public void WithSharedFieldsSource_WhenCalled_SetsSharedFieldsSource()
         {
-            var source = new FakeItem().ToSitecoreItem();
-            var item = new FakeItem()
-              .WithSharedFieldsSource(source)
-              .ToSitecoreItem();
+            Item source = new FakeItem();
+
+            Item item = new FakeItem().WithSharedFieldsSource(source);
 
             item.SharedFieldsSource.Should().Be(source);
         }
