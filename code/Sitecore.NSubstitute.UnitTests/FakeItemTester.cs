@@ -492,15 +492,19 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
-        public void FakeItem_ShouldSupportExtending_WithExtensionMethods()
+        public void FakeItem_WhenCreated_DoesNotCreateHelp()
         {
-            var item = new FakeItem();
+            Item item = new FakeItem();
 
-            item.ToSitecoreItem().Help.Should().BeNull();
+            item.Help.Should().BeNull();
+        }
 
-            item.WithItemHelp(Substitute.For<ItemHelp>(item.ToSitecoreItem()));
-
-            item.ToSitecoreItem().Help.Should().NotBeNull();
+        [Fact]
+        public void WithHelp_WhenCalled_CreatesItemHelp()
+        {
+            Item item = new FakeItem().WithHelp();
+  
+            item.Help.Should().NotBeNull();
         }
 
         [Fact]
