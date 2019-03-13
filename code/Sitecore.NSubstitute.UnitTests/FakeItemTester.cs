@@ -798,14 +798,4 @@ namespace Sitecore.NSubstitute.UnitTests
             item.SharedFieldsSource.Should().Be(source);
         }
     }
-
-    public static class TestFakeItemExtensions
-    {
-        public static FakeItem WithItemHelp(this FakeItem item, ItemHelp itemHelp)
-        {
-            item.ToSitecoreItem().Help.Returns(itemHelp);
-
-            return item;
-        }
-    }
 }
