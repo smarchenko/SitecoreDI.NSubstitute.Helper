@@ -45,14 +45,14 @@ namespace Sitecore.NSubstitute.UnitTests
         public void Constructor_WhenCalledWithId_SetsTemplateId(string templateName, ID id)
         {
             Template template = new FakeTemplate(templateName, id);
-            
+
             template.ID.Should().Be(id);
         }
 
         [Theory, AutoData]
         public void WithBaseIDs_WhenCalled_SetsBaseIDs(ID baseId)
         {
-            Template template = new FakeTemplate().WithBaseIDs(new [] { baseId });
+            Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
 
             template.BaseIDs
                 .Should().HaveCount(1)
@@ -68,89 +68,211 @@ namespace Sitecore.NSubstitute.UnitTests
 
             baseTemplates
                 .Should().HaveCount(1)
-                .And.ContainSingle(baseTemplate => baseTemplate.ID == baseId);            
+                .And.ContainSingle(baseTemplate => baseTemplate.ID == baseId);
         }
 
-        [Fact]
-        public void FakeTemplate_Descendants()
+        [Theory, AutoData]
+        public void WithBaseIDs_WhenCalled_ConfiguresDescendsFromBaseId(ID baseId)
         {
-            string baseIDs = ID.NewID.ToString();
-            var template = new FakeTemplate()
-              .WithBaseIDs(new ID[] { new ID(baseIDs) }).ToSitecoreTemplate();
+            Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
 
-            template.DescendsFrom(new ID(baseIDs)).Should().BeTrue();
-            template.DescendsFrom(ID.NewID).Should().BeFalse();
-            template.DescendsFromOrEquals(new ID(baseIDs)).Should().BeTrue();
-            template.DescendsFromOrEquals(ID.NewID).Should().BeFalse();
+            template.DescendsFrom(baseId).Should().BeTrue();
+        }
+
+        [Theory, AutoData]
+        public void WithBaseIDs_WhenCalled_ConfiguresDescendsFromOrEqualsBaseId(ID baseId)
+        {
+            Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
+
+            template.DescendsFromOrEquals(baseId).Should().BeTrue();
+        }
+
+        [Theory, AutoData]
+        public void WithBaseIDs_WhenCalled_ConfiguresDescendsFromOrEqualsForSelf(ID baseId)
+        {
+            Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
+
             template.DescendsFromOrEquals(template.ID).Should().BeTrue();
         }
 
-        [Fact]
-        public void FakeTemplate_SetFullName()
+        [Theory, AutoData]
+        public void WithBaseIDs_WhenCalled_DoesNotDescendFrom(ID baseId, ID randomId)
         {
-            string fullName = "fake full name";
-            var template = new FakeTemplate()
-              .WithFullName(fullName);
+            Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
 
-            template.ToSitecoreTemplate().FullName.Should().Be(fullName);
-            template.TemplateEngine.GetTemplate(fullName).Should().Be(template.ToSitecoreTemplate());
+            template.DescendsFrom(randomId).Should().BeFalse();
         }
 
-        [Fact]
-        public void FakeTemplate_SetIcon()
+        [Theory, AutoData]
+        public void WithBaseIDs_WhenCalled_DoesNotDescendFromOrEquals(ID baseId, ID randomId)
         {
-            string icon = "some fake icon";
-            var template = new FakeTemplate()
-              .WithIcon(icon).ToSitecoreTemplate();
+            Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
+
+            template.DescendsFromOrEquals(randomId).Should().BeFalse();
+        }
+
+        [AutoData]
+        [Theory, InlineData("Fake template full name")]
+        public void WithFullName_WhenCalled_SetsFullName(string fullName)
+        {
+            Template template = new FakeTemplate().WithFullName(fullName);
+
+            template.FullName.Should().Be(fullName);
+        }
+
+        [AutoData]
+        [Theory, InlineData("Fake template full name")]
+        public void WithFullName_WhenCalled_ConfiguresTemplateEngineToFindTemplateByFullName(string fullName)
+        {
+            FakeTemplate template = new FakeTemplate().WithFullName(fullName);
+
+            var foundByFullName = template.TemplateEngine.GetTemplate(fullName);
+
+            foundByFullName.Should().Be(template.ToSitecoreTemplate());
+        }
+
+        [Theory, InlineData("some fake icon")]
+        public void WithIcon_WhenCalled_SetsIcon(string icon)
+        {
+            Template template = new FakeTemplate().WithIcon(icon);
 
             template.Icon.Should().Be(icon);
         }
 
-        [Fact]
-        public void FakeTemplate_SetStandardValues()
+        [Theory, AutoData]
+        public void WithStandatdValues_WhenCalled_SetsStandardValueHolderId(ID standardValuesHolderId)
         {
-            ID svId = ID.NewID;
-            var template = new FakeTemplate().WithStandatdValues(svId);
+            Template template = new FakeTemplate().WithStandatdValues(standardValuesHolderId);
 
-            template.ToSitecoreTemplate().StandardValueHolderId.Should().Be(svId);
+            template.StandardValueHolderId.Should().Be(standardValuesHolderId);
         }
 
-        [Fact]
-        public void FakeTemplate_AddSection()
+        [AutoData]
+        [Theory, InlineAutoData("test section name")]
+        public void AddSection_WhenCalled_AddsSectionToParentTemplate(string name, ID id)
         {
-            string name = "test name";
-            ID id = ID.NewID;
-
             var fakeTemplate = new FakeTemplate();
-            var section = fakeTemplate.AddSection(name, id);
 
-            fakeTemplate.ToSitecoreTemplate().GetSections().Length.Should().Be(1);
-            fakeTemplate.ToSitecoreTemplate().GetSection(id).Should().Be(section.ToSitecoreTemplateSection());
+            fakeTemplate.AddSection(name, id);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            template.GetSections().Should().ContainSingle();
         }
 
-        [Fact]
-        public void FakeTemplate_AddField()
+        [AutoData]
+        [Theory, InlineAutoData("test section name")]
+        public void AddSection_WhenCalled_AllowsGetSectionToBeFoundById(string name, ID id)
         {
-            string name1 = "name1";
-            string name2 = "name2";
-            string name3 = "name3";
-            string sectionName1 = "section1";
-            string sectionName2 = "section2";
+            var fakeTemplate = new FakeTemplate();
+            TemplateSection section = fakeTemplate.AddSection(name, id);
 
-            var template = new FakeTemplate();
-            template.AddField(sectionName1, name1, ID.NewID);
-            template.AddField(sectionName1, name2, ID.NewID);
-            template.AddField(sectionName2, name3, ID.NewID);
+            Template template = fakeTemplate.ToSitecoreTemplate();
 
-            template.ToSitecoreTemplate().GetSections().Length.Should().Be(2);
-            template.ToSitecoreTemplate().GetSection(sectionName1).GetFields().Length.Should().Be(2);
-            template.ToSitecoreTemplate().GetSection(sectionName2).GetFields().Length.Should().Be(1);
+            var foundSection = template.GetSection(id);
 
-            template.ToSitecoreTemplate().GetFields().Length.Should().Be(3);
-            template.ToSitecoreTemplate()
-              .GetField(name2)
-              .Section.Should()
-              .Be(template.ToSitecoreTemplate().GetSection(sectionName1));
+            foundSection.Should().Be(section);
+        }
+
+        [AutoData]
+        [Theory, InlineAutoData("fieldUno", "sectionUno")]
+        public void AddField_WhenCalled_AddsFieldToTemplate(string fieldName, string sectionName, ID fieldId)
+        {
+            var fakeTemplate = new FakeTemplate();
+            fakeTemplate.AddField(sectionName, fieldName, fieldId);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            template.GetFields().Should().ContainSingle(field => field.ID == fieldId);
+        }
+
+        [AutoData]
+        [Theory, InlineAutoData("fieldUno", "sectionUno")]
+        public void AddField_WhenCalled_AddsSection(string fieldName, string sectionName, ID fieldId)
+        {
+            var fakeTemplate = new FakeTemplate();
+            fakeTemplate.AddField(sectionName, fieldName, fieldId);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            template.GetSections().Should().ContainSingle(section => section.Name == sectionName);
+        }
+
+        [AutoData]
+        [Theory, InlineAutoData("fieldUno", "sectionUno")]
+        public void AddField_WhenCalled_AddsFieldToSection(string fieldName, string sectionName, ID fieldId)
+        {
+            var fakeTemplate = new FakeTemplate();
+            fakeTemplate.AddField(sectionName, fieldName, fieldId);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            var section = template.GetSection(sectionName);
+                section.GetFields().Should().ContainSingle(field => field.ID == fieldId);
+        }
+
+        [AutoData]
+        [Theory, InlineAutoData("fieldUno", "sectionUno")]
+        public void AddField_WhenCalledTwoTimesForSameSection_CreatesOnlyOneSection(string unoField, string dosField, ID unoFieldId, ID dosFieldId, string sectionName)
+        {
+            var fakeTemplate = new FakeTemplate();
+            fakeTemplate.AddField(sectionName, unoField, unoFieldId);
+            fakeTemplate.AddField(sectionName, dosField, dosFieldId);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            template.GetSections().Should().ContainSingle();
+        }
+
+        [AutoData]
+        [Theory, InlineAutoData("fieldUno", "sectionUno")]
+        public void AddField_WhenCalledTwoTimesForSameSection_AddsToSameSection(string unoField, string dosField, ID unoFieldId, ID dosFieldId, string sectionName)
+        {
+            var fakeTemplate = new FakeTemplate();
+            fakeTemplate.AddField(sectionName, unoField, unoFieldId);
+            fakeTemplate.AddField(sectionName, dosField, dosFieldId);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            var section = template.GetSection(sectionName);
+            section.GetFields()
+                .Should().HaveCount(2)
+                .And.ContainSingle(f => f.ID == unoFieldId, nameof(unoFieldId))
+                .And.ContainSingle(f => f.ID == dosFieldId, nameof(dosFieldId));
+        }
+
+        [AutoData]
+        [Theory, InlineAutoData("fieldUno", "sectionUno")]
+        public void AddField_WhenCalledForDifferentSections_AddsTwoSections(string unoField, string dosField, ID unoFieldId, ID dosFieldId, string unoSectionName, string dosSectionName)
+        {
+            var fakeTemplate = new FakeTemplate();
+            fakeTemplate.AddField(unoSectionName, unoField, unoFieldId);
+            fakeTemplate.AddField(dosSectionName, dosField, dosFieldId);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            template.GetSections()
+                .Should()
+                .ContainSingle(section => section.Name == unoSectionName, nameof(unoSectionName))
+                .And
+                .ContainSingle(section => section.Name == dosSectionName, nameof(dosSectionName));
+        }
+
+        [AutoData]
+        [Theory, InlineAutoData("fieldUno", "sectionUno")]
+        public void AddField_WhenCalledForDifferentSections_AddsFieldsToDistinctSections(string unoField, string dosField, ID unoFieldId, ID dosFieldId, string unoSectionName, string dosSectionName)
+        {
+            var fakeTemplate = new FakeTemplate();
+            fakeTemplate.AddField(unoSectionName, unoField, unoFieldId);
+            fakeTemplate.AddField(dosSectionName, dosField, dosFieldId);
+
+            Template template = fakeTemplate.ToSitecoreTemplate();
+
+            template.GetSections()
+                .Should()
+                .ContainSingle(section => section.GetField(unoFieldId) != null, nameof(unoSectionName))
+                .And
+                .ContainSingle(section => section.GetField(dosFieldId) != null, nameof(dosSectionName));
         }
     }
 }
