@@ -1,67 +1,60 @@
-﻿using FluentAssertions;
-using Xunit;
+﻿using AutoFixture.Xunit2;
+using FluentAssertions;
 using Sitecore.Data;
 using Sitecore.Data.Templates;
 using Sitecore.Globalization;
+using Sitecore.NSubstituteUtils;
+using Xunit;
 
-namespace Sitecore.NSubstituteUtils.UnitTests
+namespace Sitecore.NSubstitute.UnitTests
 {
-
     public class FakeTemplateFieldTester
     {
         [Fact]
-        public void FakeTemplateField_DefaultInitialization()
+        public void Constructor_WhenCalledWithoutValues_SetsNameAndId()
         {
-            var fakeField = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()));
+            var fakeField = new FakeTemplateField();
             fakeField.Builder.Should().NotBeNull();
-            var field = fakeField.ToSitecoreTemplateField();
+            TemplateField field = fakeField;
 
             field.Should().NotBeNull();
             field.Name.Should().Be("fakeField");
             field.ID.Should().NotBeNull();
         }
 
-        [Fact]
-        public void FakeTemplateField_NonDefaultInitialization()
+        [AutoData]
+        [Theory, InlineAutoData("test name")]
+        public void Constructor_WhenCalledWithNameAndId_SetsNameAndId(string name, ID id)
         {
-            string name = "test name";
-            ID id = ID.NewID;
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()), name, id)
-              .ToSitecoreTemplateField();
+            TemplateField field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()), name, id);
 
             field.Name.Should().Be(name);
             field.ID.Should().Be(id);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetIcon()
-        {
-            string icon = "test icon";
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithIcon(icon)
-              .ToSitecoreTemplateField();
+        [AutoData]
+        [Theory, InlineData("test icon")]
+        public void WithIcon_WhenCalled_SetsIcon(string icon)
+        {             
+            TemplateField field = new FakeTemplateField().WithIcon(icon);
 
             field.Icon.Should().Be(icon);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetType()
+        [AutoData]
+        [Theory, InlineData("test type")]
+        public void WithType_WhenCalled_SetType(string fieldType)
         {
-            string fieldType = "test type";
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithType(fieldType)
-              .ToSitecoreTemplateField();
+            TemplateField field = new FakeTemplateField().WithType(fieldType);
 
             field.Type.Should().Be(fieldType);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetStyle()
-        {
-            string fieldStyle = "test style";
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithStyle(fieldStyle)
-              .ToSitecoreTemplateField();
+        [AutoData]
+        [Theory, InlineData("test style")]
+        public void WithStyle_WhenCalled_SetStyle(string fieldStyle)
+        {             
+            TemplateField field = new FakeTemplateField().WithStyle(fieldStyle);
 
             field.Style.Should().Be(fieldStyle);
         }
@@ -71,44 +64,36 @@ namespace Sitecore.NSubstituteUtils.UnitTests
         {
             string fieldTitle = "test title";
             Language language = Language.Parse("da-DK");
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
+            TemplateField field = new FakeTemplateField()
               .WithTitle(fieldTitle, language)
-              .ToSitecoreTemplateField();
+              ;
 
             field.GetTitle(language).Should().Be(fieldTitle);
             field.GetTitle(Language.Parse("en")).Should().NotBe(fieldTitle);
             field.GetTitle(Language.Parse("en")).Should().Be("");
         }
 
-        [Fact]
-        public void FakeTemplateField_SetIsBlob()
-        {
-            bool isBlob = true;
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithIsBlob(isBlob)
-              .ToSitecoreTemplateField();
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithIsBlob_WhenCalled_SetIsBlob(bool isBlob)
+        {             
+            TemplateField field = new FakeTemplateField().WithIsBlob(isBlob);
 
             field.IsBlob.Should().Be(isBlob);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetIsShared()
-        {
-            bool isShared = true;
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithIsShared(isShared)
-              .ToSitecoreTemplateField();
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithIsShared_WhenCalled_SetIsShared(bool isShared)
+        {             
+            TemplateField field = new FakeTemplateField().WithIsShared(isShared);
 
             field.IsShared.Should().Be(isShared);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetSource()
-        {
-            string source = "test source";
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithSource(source)
-              .ToSitecoreTemplateField();
+        [AutoData]
+        [Theory, InlineData("test source")]
+        public void WithSource_WhenCalled_SetSource(string source)
+        {            
+            TemplateField field = new FakeTemplateField().WithSource(source);
 
             field.Source.Should().Be(source);
         }
@@ -118,55 +103,46 @@ namespace Sitecore.NSubstituteUtils.UnitTests
         {
             string fieldToolTip = "test tooltip";
             Language language = Language.Parse("da-DK");
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
+            TemplateField field = new FakeTemplateField()
               .WithToolTip(fieldToolTip, language)
-              .ToSitecoreTemplateField();
+              ;
 
             field.GetToolTip(language).Should().Be(fieldToolTip);
             field.GetToolTip(Language.Parse("en")).Should().NotBe(fieldToolTip);
             field.GetToolTip(Language.Parse("en")).Should().Be("");
         }
 
-        [Fact]
-        public void FakeTemplateField_SetHelpLink()
-        {
-            string link = "test link";
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithHelpLink(link)
-              .ToSitecoreTemplateField();
+        [AutoData]
+        [Theory, InlineData("test link")]
+        public void WithHelpLink_WhenCalled_SetHelpLink(string link)
+        {            
+            TemplateField field = new FakeTemplateField().WithHelpLink(link);
 
             field.HelpLink.Should().Be(link);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetSortorder()
-        {
-            int sort = 100;
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithSortorder(sort)
-              .ToSitecoreTemplateField();
+        [AutoData]
+        [Theory, InlineData(100)]
+        public void FakeTemplateField_SetSortOrder(int sort)
+        {             
+            TemplateField field = new FakeTemplateField().WithSortorder(sort);
 
             field.Sortorder.Should().Be(sort);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetResetBlank()
-        {
-            bool reset = true;
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithResetBlank(reset)
-              .ToSitecoreTemplateField();
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithResetBlank_WhenCalled_SetResetBlank(bool reset)
+        {             
+            TemplateField field = new FakeTemplateField().WithResetBlank(reset);
 
             field.ResetBlank.Should().Be(reset);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetValidation()
+        [AutoData]
+        [Theory, InlineData("validation")]
+        public void WithValidation_WhenCalled_SetValidation(string validation)
         {
-            string validation = "validation";
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithValidation(validation)
-              .ToSitecoreTemplateField();
+            TemplateField field = new FakeTemplateField().WithValidation(validation);
 
             field.Validation.Should().Be(validation);
         }
@@ -176,33 +152,26 @@ namespace Sitecore.NSubstituteUtils.UnitTests
         {
             string fieldDescription = "test description";
             Language language = Language.Parse("da-DK");
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithDescription(fieldDescription, language)
-              .ToSitecoreTemplateField();
+            TemplateField field = new FakeTemplateField().WithDescription(fieldDescription, language);
 
             field.GetDescription(language).Should().Be(fieldDescription);
             field.GetDescription(Language.Parse("en")).Should().NotBe(fieldDescription);
             field.GetDescription(Language.Parse("en")).Should().Be("");
         }
 
-        [Fact]
-        public void FakeTemplateField_SetUnversioned()
+        [Theory, InlineData(true), InlineData(false)]
+        public void WithUnversioned_WhenCalled_SetUnversioned(bool unversioned)
         {
-            bool unversioned = true;
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithUnversioned(unversioned)
-              .ToSitecoreTemplateField();
+            TemplateField field = new FakeTemplateField().WithUnversioned(unversioned);
 
             field.IsUnversioned.Should().Be(unversioned);
         }
 
-        [Fact]
-        public void FakeTemplateField_SetDefaultValue()
-        {
-            string defaultValue = "default value";
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
-              .WithDefaultValue(defaultValue)
-              .ToSitecoreTemplateField();
+        [AutoData]
+        [Theory, InlineData("default value")]
+        public void WithDefaultValue_WhenCalled_SetsDefaultValue(string defaultValue)
+        {            
+            TemplateField field = new FakeTemplateField().WithDefaultValue(defaultValue);
 
             field.DefaultValue.Should().Be(defaultValue);
         }
@@ -212,9 +181,9 @@ namespace Sitecore.NSubstituteUtils.UnitTests
         {
             string text = "test validation text";
             Language language = Language.Parse("da-DK");
-            var field = new FakeTemplateField(new FakeTemplateSection(new FakeTemplate()))
+            TemplateField field = new FakeTemplateField()
               .WithValidationText(text, language)
-              .ToSitecoreTemplateField();
+              ;
 
             field.GetValidationText(language).Should().Be(text);
             field.GetValidationText(Language.Parse("en")).Should().NotBe(text);
