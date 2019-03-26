@@ -3,6 +3,7 @@ using System.Linq;
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using NSubstitute;
+using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.NSubstituteUtils;
@@ -91,11 +92,29 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Fact]
+        public void Constructor_WhenCalled_GetChildrenMethodIsSetupInitialized()
+        {
+            Item item = new FakeItem();
+
+            item.GetChildren().Should().NotBeNull();
+            item.GetChildren(ChildListOptions.None).Should().NotBeNull();
+        }
+
+        [Fact]
         public void Constructor_WhenCalled_HasZeroChildren()
         {
             Item item = new FakeItem();
 
             item.Children.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void Constructor_WhenCalled_HasNoChildren()
+        {
+            Item item = new FakeItem();
+
+            item.GetChildren().Count.Should().Be(0);
+            item.GetChildren(ChildListOptions.None).Count.Should().Be(0);
         }
 
         [Fact]
@@ -272,6 +291,20 @@ namespace Sitecore.NSubstitute.UnitTests
             scItem.Database.GetItem(firstChild).ID.Should().Be(firstChild);
         }
 
+        [Theory, AutoData]
+        public void WithChild_WhenCalled_UpdatesGetChildren(ID firstChild, ID secondChild)
+        {
+            var item = new FakeItem();
+
+            var scItem = (Item)item;
+            item
+                .WithChild(new FakeItem(firstChild, scItem.Database))
+                .WithChild(new FakeItem(secondChild, scItem.Database));
+
+            scItem.GetChildren().Should().HaveCount(2);
+            scItem.GetChildren(ChildListOptions.None).Should().HaveCount(2);
+        }
+
         #region WithTemplate tests
 
         [Theory, AutoData]
@@ -355,6 +388,21 @@ namespace Sitecore.NSubstitute.UnitTests
 
             Item item = fakeItem;
             item.Children.Should().HaveCount(reducedChildCount);
+        }
+
+        [Theory, AutoData]
+        public void Add_WhenChildAdded_GetChildrenMethodChildrenCountIncrements(int childrenToAdd)
+        {
+            var reducedChildCount = (childrenToAdd % 9) + 4;
+            var fakeItem = new FakeItem();
+
+            Enumerable.Repeat(0, reducedChildCount)
+                .ToList()
+                .ForEach(_ => fakeItem.Add(new FakeItem()));
+
+            Item item = fakeItem;
+            item.GetChildren().Should().HaveCount(reducedChildCount);
+            item.GetChildren(ChildListOptions.None).Should().HaveCount(reducedChildCount);
         }
 
         [Fact]
