@@ -5,6 +5,7 @@ using FluentAssertions;
 using NSubstitute;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Templates;
 using Sitecore.NSubstituteUtils;
 using Sitecore.Security.AccessControl;
 using Xunit;
@@ -304,17 +305,39 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, AutoData]
-        public void WithTemplate_WhenCalled_ConfiguresTemplateEngineToFindItemTemplate(ID templateId)
+        public void WithTemplate_WhenCalled_ConfiguresTemplateEngineToFindItemTemplate(ID templateId, string contextDatabaseName)
         {
             // Arrange
-            Item item = new FakeItem().WithTemplate(templateId);
+            var database = FakeUtil.FakeDatabase(contextDatabaseName);
+            Item item = new FakeItem(database: database).WithTemplate(templateId);
 
             // Act
-            var itemTemplate = item.Database.Engines.TemplateEngine.GetTemplate(templateId);
+            var itemTemplate = database.Engines.TemplateEngine.GetTemplate(templateId);
 
             // Assert
-            itemTemplate.Should().NotBeNull();
+            itemTemplate
+                .Should().NotBeNull()
+                .And.Match<Template>(template => template.ID == templateId);
         }
+
+        [Theory, AutoData]
+        public void WithTemplate_WhenCalledMultipleTimesForSameDatabase_AllowsLocatingAny(string contextDatabaseName, ID firstTemplateId, ID secondTemplateId)
+        {
+            // Arrange
+            var database = FakeUtil.FakeDatabase(contextDatabaseName);
+
+            Item unoItem = new FakeItem(database: database).WithTemplate(firstTemplateId);
+            Item dosItem = new FakeItem(database: database).WithTemplate(secondTemplateId);
+
+            // Act
+            var unoTemplate = database.Engines.TemplateEngine.GetTemplate(firstTemplateId);
+
+            // Assert
+            unoTemplate
+                .Should().NotBeNull()
+                .And.Match<Template>(template => template.ID == firstTemplateId);
+        }
+
         #endregion
 
         [Theory, InlineData("my test item")]
