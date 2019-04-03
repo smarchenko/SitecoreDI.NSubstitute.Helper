@@ -55,6 +55,30 @@ namespace Sitecore.NSubstitute.UnitTests
             field.Value.Should().Be(fieldValue);
         }
 
+        [Theory, AutoData]
+        public void HasValue_WhenFieldValueSet_ReturnsTrue(string fieldValue)
+        {
+            Field field = new FakeField().WithValue(fieldValue);
+
+            field.HasValue.Should().BeTrue();
+        }
+
+        [Fact]
+        public void HasValue_WhenEmptyValueSet_ReturnsTrue()
+        {
+            Field field = new FakeField().WithValue(string.Empty);
+
+            field.HasValue.Should().BeTrue();
+        }
+
+        [Fact]
+        public void HasValue_WhenNullValueSet_ReturnsFalse()
+        {
+            Field field = new FakeField().WithValue(null);
+
+            field.HasValue.Should().BeFalse();
+        }
+
         [Theory, AutoData]        
         [InlineData("test field value")]
         public void Constructor_WhenReceivesFieldValue_SetsFieldValue(string fieldValue)
