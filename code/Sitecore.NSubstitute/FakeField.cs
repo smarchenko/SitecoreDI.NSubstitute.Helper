@@ -36,6 +36,9 @@
     public FakeField WithValue(string value)
     {
       this.Field.Value.Returns(value);
+      
+      this.WithHasValue(value != null);
+
       return this;
     }
 
