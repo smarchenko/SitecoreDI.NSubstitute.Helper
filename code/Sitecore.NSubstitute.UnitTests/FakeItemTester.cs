@@ -91,13 +91,17 @@ namespace Sitecore.NSubstitute.UnitTests
             item.Children.Should().NotBeNull();
         }
 
-        [Fact]
-        public void Constructor_WhenCalled_GetChildrenMethodIsSetupInitialized()
+        [Theory]
+        [InlineData(ChildListOptions.None)]
+        [InlineData(ChildListOptions.AllowReuse)]
+        [InlineData(ChildListOptions.IgnoreSecurity)]
+        [InlineData(ChildListOptions.SkipSorting)]
+        public void Constructor_WhenCalled_GetChildrenMethodIsSetupInitialized(ChildListOptions options)
         {
             Item item = new FakeItem();
 
             item.GetChildren().Should().NotBeNull();
-            item.GetChildren(ChildListOptions.None).Should().NotBeNull();
+            item.GetChildren(options).Should().NotBeNull();
         }
 
         [Fact]
@@ -105,16 +109,20 @@ namespace Sitecore.NSubstitute.UnitTests
         {
             Item item = new FakeItem();
 
-            item.Children.Count.Should().Be(0);
+            item.Children.Should().BeEmpty();
         }
 
-        [Fact]
-        public void Constructor_WhenCalled_HasNoChildren()
+        [Theory]
+        [InlineData(ChildListOptions.None)]
+        [InlineData(ChildListOptions.AllowReuse)]
+        [InlineData(ChildListOptions.IgnoreSecurity)]
+        [InlineData(ChildListOptions.SkipSorting)]
+        public void Constructor_WhenCalled_HasNoChildren(ChildListOptions options)
         {
             Item item = new FakeItem();
 
-            item.GetChildren().Count.Should().Be(0);
-            item.GetChildren(ChildListOptions.None).Count.Should().Be(0);
+            item.GetChildren().Should().BeEmpty();
+            item.GetChildren(options).Should().BeEmpty();
         }
 
         [Fact]

@@ -33,9 +33,9 @@ namespace Sitecore.NSubstituteUtils
       Item.Language.Returns(Globalization.Language.Invariant);
       Item.Version.Returns(Version.First);
 
-      this.Item.Children.Returns(new ChildList(this.Item, this.childList));
-      this.Item.GetChildren(Arg.Any<ChildListOptions>()).Returns(new ChildList(this.Item, this.childList));
-      this.Item.GetChildren().Returns(new ChildList(this.Item, this.childList));
+      this.Item.Children.Returns(Substitute.For<ChildList>(this.Item, this.childList));
+      this.Item.GetChildren(Arg.Any<ChildListOptions>()).Returns(Substitute.For<ChildList>(this.Item, this.childList));
+      this.Item.GetChildren().Returns(Substitute.For<ChildList>(this.Item, this.childList));
       this.Item.HasChildren.Returns(o => this.childList.Count > 0);
       this.Item.Database.GetItem(this.Item.ID).Returns(this.Item);
       this.Item.Database.GetItem(this.Item.ID.ToString()).Returns(this.Item);
