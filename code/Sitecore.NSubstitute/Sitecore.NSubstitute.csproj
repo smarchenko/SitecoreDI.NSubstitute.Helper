@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net452</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyName>Sitecore.NSubstituteUtils</AssemblyName>
+    <RootNamespace>Sitecore.NSubstituteUtils</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NSubstitute" Version="4.0.0" />
-    <PackageReference Include="Sitecore.Kernel.NoReferences" Version="9.0.180604"/>
+    <PackageReference Include="NSubstitute" Version="1.9.2" />
+    <PackageReference Include="Sitecore.Kernel.NoReferences" Version="8.2.160729" />
   </ItemGroup>  
 </Project>

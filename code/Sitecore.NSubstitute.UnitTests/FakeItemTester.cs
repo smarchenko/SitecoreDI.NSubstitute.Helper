@@ -744,7 +744,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void WithBranches_WhenCalled_SetsItemBranches()
         {
-            var branches = Array.Empty<BranchItem>();
+            var branches = new BranchItem[0];
             Item item = new FakeItem().WithBranches(branches);
 
             item.Branches.Should().NotBeNull();
@@ -811,7 +811,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void WithGetClones_WhenCalled_ConfiguresItemGetClones()
         {
-            var clones = Array.Empty<Item>();
+            var clones = new Item[0];
             Item item = new FakeItem().WithGetClones(clones);
 
             item.GetClones().Should().BeEmpty();
@@ -821,7 +821,7 @@ namespace Sitecore.NSubstitute.UnitTests
         [Fact]
         public void WithGetClones_WhenCalled_ConfiguresHasClones()
         {
-            var clones = Array.Empty<Item>();
+            var clones = new Item[0];
             Item item = new FakeItem().WithGetClones(clones);
 
             item.HasClones.Should().BeFalse();
