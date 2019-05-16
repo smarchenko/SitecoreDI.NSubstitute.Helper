@@ -6,6 +6,7 @@ using NSubstitute;
 using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Templates;
 using Sitecore.NSubstituteUtils;
 using Sitecore.Security.AccessControl;
 using Xunit;
@@ -313,6 +314,41 @@ namespace Sitecore.NSubstitute.UnitTests
             scItem.GetChildren(ChildListOptions.None).Should().HaveCount(2);
         }
 
+        [Theory, AutoData]
+        public void WithChild_WhenCalled_SetsParentIdToChild(ID childId, ID parentId)
+        {
+            // Arrange
+            var fakeChild = new FakeItem(childId);
+
+
+            Item parent = new FakeItem(parentId)
+                // Act
+                .WithChild(fakeChild);
+
+            var childParentId = fakeChild.ToSitecoreItem().ParentID;
+
+            // Assert
+            childParentId
+                .Should().Be(parentId, because: "item was added as a child to parent");
+        }
+
+        [Theory, AutoData]
+        public void WithChild_WhenCalled_SetsParentToChild(ID childId, ID parentId)
+        {
+            // Arrange
+            var fakeChild = new FakeItem(childId);
+
+            Item parent = new FakeItem(parentId)
+                // Act
+                .WithChild(fakeChild);
+
+            var childParentItem = fakeChild.ToSitecoreItem().Parent;
+
+            // Assert
+            childParentItem
+                .Should().Be(parent, because: "item was added as a child to parent");
+        }
+
         #region WithTemplate tests
 
         [Theory, AutoData]
@@ -345,17 +381,21 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, AutoData]
-        public void WithTemplate_WhenCalled_ConfiguresTemplateEngineToFindItemTemplate(ID templateId)
+        public void WithTemplate_WhenCalled_ConfiguresTemplateEngineToFindItemTemplate(ID templateId, string contextDatabaseName)
         {
             // Arrange
-            Item item = new FakeItem().WithTemplate(templateId);
+            var database = FakeUtil.FakeDatabase(contextDatabaseName);
+            Item item = new FakeItem(database: database).WithTemplate(templateId);
 
             // Act
-            var itemTemplate = item.Database.Engines.TemplateEngine.GetTemplate(templateId);
+            var itemTemplate = database.Engines.TemplateEngine.GetTemplate(templateId);
 
             // Assert
-            itemTemplate.Should().NotBeNull();
+            itemTemplate
+                .Should().NotBeNull()
+                .And.Match<Template>(template => template.ID == templateId);
         }
+
         #endregion
 
         [Theory, InlineData("my test item")]
