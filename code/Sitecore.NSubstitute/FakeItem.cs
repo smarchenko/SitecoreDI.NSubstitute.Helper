@@ -116,14 +116,16 @@ namespace Sitecore.NSubstituteUtils
     {
       this.childList.Add(child);
 
+      child.Item.Parent.Returns(this);
+      child.Item.ParentID.Returns(this.ID);            
+
       return this;
     }
 
     public FakeItem WithParent(FakeItem parent)
     {
       parent.WithChild(this);
-      this.Item.Parent.Returns(parent);
-      this.Item.ParentID.Returns(parent.ID);
+            
       return this;
     }
 
