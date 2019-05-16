@@ -396,24 +396,6 @@ namespace Sitecore.NSubstitute.UnitTests
                 .And.Match<Template>(template => template.ID == templateId);
         }
 
-        [Theory, AutoData]
-        public void WithTemplate_WhenCalledMultipleTimesForSameDatabase_AllowsLocatingAny(string contextDatabaseName, ID firstTemplateId, ID secondTemplateId)
-        {
-            // Arrange
-            var database = FakeUtil.FakeDatabase(contextDatabaseName);
-
-            Item unoItem = new FakeItem(database: database).WithTemplate(firstTemplateId);
-            Item dosItem = new FakeItem(database: database).WithTemplate(secondTemplateId);
-
-            // Act
-            var unoTemplate = database.Engines.TemplateEngine.GetTemplate(firstTemplateId);
-
-            // Assert
-            unoTemplate
-                .Should().NotBeNull()
-                .And.Match<Template>(template => template.ID == firstTemplateId);
-        }
-
         #endregion
 
         [Theory, InlineData("my test item")]
