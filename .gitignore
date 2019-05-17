@@ -214,3 +214,4 @@ output/
 buildscript/legoland_*.txt
 buildscript/environment.local.include
 code/.nuget/NuGet.exe
+code/.vs/Sitecore.NSubstitute/
