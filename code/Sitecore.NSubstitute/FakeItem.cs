@@ -43,44 +43,23 @@ namespace Sitecore.NSubstituteUtils
             Item.Database.GetItem(Item.ID, Item.Language).Returns(Item);
         }
 
-        public ID ID
-        {
-            get
-            {
-                return Item.ID;
-            }
-        }
+        public ID ID => Item.ID;
 
         private Item Item { get; set; }
 
-        public static implicit operator Item(FakeItem fakeItem)
-        {
-            return fakeItem.Item;
-        }
+        public static implicit operator Item(FakeItem fakeItem) => fakeItem.Item;
 
         /// <summary>
         /// Converts current instance to Sitecore item.
         /// </summary>
         /// <returns></returns>
-        public Item ToSitecoreItem()
-        {
-            return Item;
-        }
+        public Item ToSitecoreItem() => Item;
 
-        public void Add(ID id, string name, string value)
-        {
-            WithField(id, name, value);
-        }
+        public void Add(ID id, string name, string value) => WithField(id, name, value);
 
-        public void Add(string name, string value)
-        {
-            WithField(name, value);
-        }
+        public void Add(string name, string value) => WithField(name, value);
 
-        public void Add(ID id, string value)
-        {
-            WithField(id, value);
-        }
+        public void Add(ID id, string value) => WithField(id, value);
 
         public FakeItem WithTemplate(ID templateId)
         {
@@ -129,15 +108,9 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithField(string name, string value)
-        {
-            return WithField(ID.NewID, name, value);
-        }
+        public FakeItem WithField(string name, string value) => WithField(ID.NewID, name, value);
 
-        public FakeItem WithField(ID id, string value)
-        {
-            return WithField(id, string.Empty, value);
-        }
+        public FakeItem WithField(ID id, string value) => WithField(id, string.Empty, value);
 
         public FakeItem WithField(ID id, string name, string value)
         {
@@ -186,10 +159,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public void Add(FakeItem child)
-        {
-            WithChild(child);
-        }
+        public void Add(FakeItem child) => WithChild(child);
 
         public FakeItem WithPath(string itemPath)
         {
@@ -223,10 +193,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithLanguage(string languageName)
-        {
-            return WithLanguage(Globalization.Language.Parse(languageName));
-        }
+        public FakeItem WithLanguage(string languageName) => WithLanguage(Globalization.Language.Parse(languageName));
 
         public FakeItem WithLanguage(Sitecore.Globalization.Language language)
         {
@@ -239,12 +206,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithVersion(int number)
-        {
-            var version = Version.Parse(number);
-
-            return WithVersion(version);
-        }
+        public FakeItem WithVersion(int number) => WithVersion(Version.Parse(number));
 
         public FakeItem WithVersion(Sitecore.Data.Version version)
         {
@@ -257,33 +219,22 @@ namespace Sitecore.NSubstituteUtils
         public FakeItem WithAppearance(ItemAppearance appearance)
         {
             Item.Appearance.Returns(appearance);
-
             return this;
         }
 
-        public FakeItem WithAppearance()
-        {
-            var appearance = Substitute.For<ItemAppearance>(Item);
-            return WithAppearance(appearance);
-        }
+        public FakeItem WithAppearance() => WithAppearance(Substitute.For<ItemAppearance>(Item));
 
         public FakeItem WithStatistics(ItemStatistics statistics)
         {
             Item.Statistics.Returns(statistics);
-
             return this;
         }
 
-        public FakeItem WithStatistics()
-        {
-            var statistics = Substitute.For<ItemStatistics>(Item);
-            return WithStatistics(statistics);
-        }
+        public FakeItem WithStatistics() => WithStatistics(Substitute.For<ItemStatistics>(Item));
 
         public FakeItem WithItemLinks(ItemLinks links)
         {
             Item.Links.Returns(links);
-
             return this;
         }
 
@@ -296,7 +247,6 @@ namespace Sitecore.NSubstituteUtils
         public FakeItem WithItemLocking(ItemLocking itemLocking)
         {
             Item.Locking.Returns(itemLocking);
-
             return this;
         }
 
@@ -309,28 +259,18 @@ namespace Sitecore.NSubstituteUtils
         public FakeItem WithItemVersions(ItemVersions versions)
         {
             Item.Versions.Returns(versions);
-
             return this;
         }
 
-        public FakeItem WithItemVersions()
-        {
-            var versions = Substitute.For<ItemVersions>(Item);
-            return WithItemVersions(versions);
-        }
+        public FakeItem WithItemVersions() => WithItemVersions(Substitute.For<ItemVersions>(Item));
 
         public FakeItem WithItemAxes(ItemAxes axes)
         {
             Item.Axes.Returns(axes);
-
             return this;
         }
 
-        public FakeItem WithItemAxes()
-        {
-            var axes = Substitute.For<ItemAxes>(Item);
-            return WithItemAxes(axes);
-        }
+        public FakeItem WithItemAxes() => WithItemAxes(Substitute.For<ItemAxes>(Item));
 
         public FakeItem WithItemEditing(ItemEditing itemEditing)
         {
@@ -351,11 +291,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithBranch()
-        {
-            var branch = Substitute.For<BranchItem>(Item);
-            return WithBranch(branch);
-        }
+        public FakeItem WithBranch() => WithBranch(Substitute.For<BranchItem>(Item));
 
         public FakeItem WithBranchId(ID branchId)
         {
@@ -426,13 +362,13 @@ namespace Sitecore.NSubstituteUtils
 
         public FakeItem WithLanguages(string[] languages)
         {
-            var langs = new List<Language>();
+            var parsedLanguages = new List<Language>();
             foreach (var lang in languages)
             {
-                langs.Add(Language.Parse(lang));
+                parsedLanguages.Add(Language.Parse(lang));
             }
 
-            return WithLanguages(langs.ToArray());
+            return WithLanguages(parsedLanguages.ToArray());
         }
 
         public FakeItem WithModified(bool modified)
@@ -453,10 +389,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithOriginalLanguage(string language)
-        {
-            return WithOriginalLanguage(Language.Parse(language));
-        }
+        public FakeItem WithOriginalLanguage(string language) => WithOriginalLanguage(Language.Parse(language));
 
         public FakeItem WithPublishing(ItemPublishing publishing)
         {
@@ -464,10 +397,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithPublishing()
-        {
-            return WithPublishing(Substitute.For<ItemPublishing>(Item));
-        }
+        public FakeItem WithPublishing() => WithPublishing(Substitute.For<ItemPublishing>(Item));
 
         public FakeItem WithRuntimeSettings(ItemRuntimeSettings runtime)
         {
@@ -475,10 +405,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithRuntimeSettings()
-        {
-            return WithRuntimeSettings(Substitute.For<ItemRuntimeSettings>(Item));
-        }
+        public FakeItem WithRuntimeSettings() => WithRuntimeSettings(Substitute.For<ItemRuntimeSettings>(Item));
 
         public FakeItem WithSecurity(ItemSecurity security)
         {
@@ -486,10 +413,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithSecurity()
-        {
-            return WithSecurity(Substitute.For<ItemSecurity>(Item));
-        }
+        public FakeItem WithSecurity() => WithSecurity(Substitute.For<ItemSecurity>(Item));
 
         public FakeItem WithSource(Item source)
         {
@@ -503,10 +427,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithSourceUri()
-        {
-            return WithSourceUri(FakeUtil.FakeItemUri());
-        }
+        public FakeItem WithSourceUri() => WithSourceUri(FakeUtil.FakeItemUri());
 
         public FakeItem WithState(ItemState state)
         {
@@ -514,10 +435,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithState()
-        {
-            return WithState(Substitute.For<ItemState>(Item));
-        }
+        public FakeItem WithState() => WithState(Substitute.For<ItemState>(Item));
 
         public FakeItem WithTemplateName(string name)
         {
@@ -531,10 +449,7 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public FakeItem WithVisualization()
-        {
-            return WithVisualization(Substitute.For<ItemVisualization>(Item));
-        }
+        public FakeItem WithVisualization() => WithVisualization(Substitute.For<ItemVisualization>(Item));
 
         public FakeItem WithIsItemClone(bool isClone)
         {
