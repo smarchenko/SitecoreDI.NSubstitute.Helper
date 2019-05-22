@@ -88,6 +88,14 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, AutoData]
+        public void WithBaseIDs_WhenCalled_ConfiguresInheritsFrom(ID baseId)
+        {
+            Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
+
+            template.InheritsFrom(baseId).Should().BeTrue();
+        }
+
+        [Theory, AutoData]
         public void WithBaseIDs_WhenCalled_ConfiguresDescendsFromOrEqualsForSelf(ID baseId)
         {
             Template template = new FakeTemplate().WithBaseIDs(new[] { baseId });
@@ -140,9 +148,9 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, AutoData]
-        public void WithStandatdValues_WhenCalled_SetsStandardValueHolderId(ID standardValuesHolderId)
+        public void WithStandardValues_WhenCalled_SetsStandardValueHolderId(ID standardValuesHolderId)
         {
-            Template template = new FakeTemplate().WithStandatdValues(standardValuesHolderId);
+            Template template = new FakeTemplate().WithStandardValues(standardValuesHolderId);
 
             template.StandardValueHolderId.Should().Be(standardValuesHolderId);
         }
