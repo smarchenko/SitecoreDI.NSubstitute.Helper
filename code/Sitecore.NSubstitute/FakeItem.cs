@@ -22,6 +22,14 @@ namespace Sitecore.NSubstituteUtils
     {
         private readonly ItemList childList = new ItemList();
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="FakeItem"/> optionally providing item <paramref name="id"/> and <paramref name="database"/>.
+        /// <para>Sets <see cref="Data.Items.Item.Language"/> (to <see cref="Language.Invariant"/>) and <see cref="Data.Items.Item.Version"/> (to <see cref="Version.First"/>).</para>
+        /// <para>Fakes <see cref="Data.Items.Item.Paths"/>, <see cref="Data.Items.Item.Fields"/>, and <see cref="Data.Items.Item.Children"/> out-of-the-box.</para>
+        /// <para>Configures <paramref name="database"/> to return this instance for GetItem calls.</para>
+        /// </summary>
+        /// <param name="id">The optional item id to use; otherwise random <see cref="Sitecore.Data.ID"/> is picked.</param>
+        /// <param name="database">The optional database item belongs to; otherwise random <see cref="Database"/> is set as item owner.</param>
         public FakeItem(ID id = null, Database database = null)
         {
             Item = FakeUtil.FakeItem(id ?? ID.NewID, "fakeItem", database ?? FakeUtil.FakeDatabase());
