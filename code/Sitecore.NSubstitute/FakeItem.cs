@@ -118,6 +118,12 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
+        /// <summary>
+        /// Adds item as a child, sets <paramref name="child"/> parent to current item.
+        /// <para><see cref="Data.Items.Item.Children"/>, and <see cref="Data.Items.Item.GetChildren()"/> will have added <paramref name="child"/>.</para>
+        /// </summary>
+        /// <param name="child">The child item of current one.</param>
+        /// <returns>Self to power builder-alike configuration.</returns>
         public FakeItem WithChild(FakeItem child)
         {
             childList.Add(child);
@@ -128,6 +134,12 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
+        /// <summary>
+        /// Sets current item as a child of <paramref name="parent"/>.
+        /// <para>Current item becomes a member of parent children.</para>
+        /// </summary>
+        /// <param name="parent">The item to be a parent for current one.</param>
+        /// <returns></returns>
         public FakeItem WithParent(FakeItem parent)
         {
             parent.WithChild(this);
