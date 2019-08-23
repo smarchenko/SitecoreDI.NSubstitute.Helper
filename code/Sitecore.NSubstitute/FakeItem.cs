@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using System.Globalization;
+using NSubstitute;
 using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Engines;
@@ -73,6 +74,30 @@ namespace Sitecore.NSubstituteUtils
         /// <param name="name">The name of the field to be added.</param>
         /// <param name="value">The value of the field to be added.</param>
         public void Add(ID id, string name, string value) => WithField(id, name, value);
+
+        /// <summary>
+        /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to current item.
+        /// </summary>
+        /// <param name="id">The id of the field to be added.</param>
+        /// <param name="name">The name of the field to be added.</param>
+        /// <param name="value">The value of the field to be added.</param>
+        public void Add(ID id, string name, Guid value) => WithField(id, name, value);
+
+        /// <summary>
+        /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to current item.
+        /// </summary>
+        /// <param name="id">The id of the field to be added.</param>
+        /// <param name="name">The name of the field to be added.</param>
+        /// <param name="value">The value of the field to be added.</param>
+        public void Add(ID id, string name, bool value) => WithField(id, name, value);
+
+        /// <summary>
+        /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to current item.
+        /// </summary>
+        /// <param name="id">The id of the field to be added.</param>
+        /// <param name="name">The name of the field to be added.</param>
+        /// <param name="value">The value of the field to be added.</param>
+        public void Add(ID id, string name, int value) => WithField(id, name, value);
 
         /// <summary>
         /// Adds a field with given  <paramref name="name"/> and <paramref name="value"/> to current item.
@@ -166,6 +191,39 @@ namespace Sitecore.NSubstituteUtils
         /// <param name="value">The value of the field to be added.</param>
         /// <returns>Self to power builder-alike configuration.</returns>
         public FakeItem WithField(ID id, string value) => WithField(id, string.Empty, value);
+
+        /// <summary>
+        /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to the item.
+        /// <para>Configures <see cref="Data.Items.Item"/> and <see cref="Data.Items.Item.Fields"/> indexers to find the field by name, <see cref="Field.ID"/>.</para>
+        /// <para>Configures <see cref="Data.Items.Item.Template"/> to return <see cref="TemplateField"/> for by field name, id.</para>
+        /// </summary>
+        /// <param name="id">The id of the field to be added.</param>
+        /// <param name="name">The name of the field to be added.</param>
+        /// <param name="value">The value of the field to be added.</param>
+        /// <returns>Self to power builder-alike configuration.</returns>
+        public FakeItem WithField(ID id, string name, Guid value) => WithField(id, name, value.ToString());
+
+        /// <summary>
+        /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to the item.
+        /// <para>Configures <see cref="Data.Items.Item"/> and <see cref="Data.Items.Item.Fields"/> indexers to find the field by name, <see cref="Field.ID"/>.</para>
+        /// <para>Configures <see cref="Data.Items.Item.Template"/> to return <see cref="TemplateField"/> for by field name, id.</para>
+        /// </summary>
+        /// <param name="id">The id of the field to be added.</param>
+        /// <param name="name">The name of the field to be added.</param>
+        /// <param name="value">The value of the field to be added.</param>
+        /// <returns>Self to power builder-alike configuration.</returns>
+        public FakeItem WithField(ID id, string name, bool value) => WithField(id, name, value ? "1" : "0");
+
+        /// <summary>
+        /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to the item.
+        /// <para>Configures <see cref="Data.Items.Item"/> and <see cref="Data.Items.Item.Fields"/> indexers to find the field by name, <see cref="Field.ID"/>.</para>
+        /// <para>Configures <see cref="Data.Items.Item.Template"/> to return <see cref="TemplateField"/> for by field name, id.</para>
+        /// </summary>
+        /// <param name="id">The id of the field to be added.</param>
+        /// <param name="name">The name of the field to be added.</param>
+        /// <param name="value">The value of the field to be added.</param>
+        /// <returns>Self to power builder-alike configuration.</returns>
+        public FakeItem WithField(ID id, string name, int value) => WithField(id, name, value.ToString(CultureInfo.InvariantCulture));
 
         /// <summary>
         /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to the item.

@@ -5,6 +5,7 @@ using FluentAssertions;
 using NSubstitute;
 using Sitecore.Collections;
 using Sitecore.Data;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Templates;
 using Sitecore.NSubstituteUtils;
@@ -205,6 +206,168 @@ namespace Sitecore.NSubstitute.UnitTests
 
             // Act
             var actualFieldValue = item.Fields[fieldName].Value;
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue);
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void FieldIndexerByFieldName_AfterGuidAdd_ReturnsAddedValue(string fieldName, Guid addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = item.Fields[fieldName].Value;
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue.ToString());
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void FieldIndexerByFieldId_AfterGuidAdd_ReturnsAddedValue(string fieldName, Guid addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = item.Fields[fieldId].Value;
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue.ToString());
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void ItemIndexerByFieldId_AfterGuidAdd_ReturnsAddedValue(string fieldName, Guid addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = item[fieldId];
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue.ToString());
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void FieldIndexerByFieldName_AfterBoolAdd_ReturnsAddedValue(string fieldName, bool addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = MainUtil.GetBool(item.Fields[fieldName].Value, defaultValue: !addedFieldValue);
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue);
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void FieldIndexerByFieldId_AfterBoolAdd_ReturnsAddedValue(string fieldName, bool addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = MainUtil.GetBool(item.Fields[fieldId].Value, defaultValue: !addedFieldValue);
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue);
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void ItemIndexerByFieldId_AfterBoolAdd_ReturnsAddedValue(string fieldName, bool addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = MainUtil.GetBool(item[fieldId], defaultValue: !addedFieldValue);
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue);
+        }
+
+        [Theory]
+        [InlineAutoData("test field", true)]
+        [InlineAutoData("test field", false)]
+        public void Field_WhenCalled_InSyncWithCheckboxField(string fieldName, bool isChecked, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, isChecked);
+            Item item = fakeItem;
+            
+            // Act
+            var field = new CheckboxField(item.Fields[fieldId]);
+
+            // Assert
+            field.Checked.Should().Be(isChecked);            
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void FieldIndexerByFieldName_AfterIntAdd_ReturnsAddedValue(string fieldName, int addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = MainUtil.GetInt(item.Fields[fieldName].Value, 0);
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue);
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void FieldIndexerByFieldId_AfterIntAdd_ReturnsAddedValue(string fieldName, int addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = MainUtil.GetInt(item.Fields[fieldId].Value, 0);
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue);
+        }
+
+        [Theory, InlineAutoData("test field")]
+        public void ItemIndexerByFieldId_AfterIntAdd_ReturnsAddedValue(string fieldName, int addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = MainUtil.GetInt(item[fieldId], 0);
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue);
