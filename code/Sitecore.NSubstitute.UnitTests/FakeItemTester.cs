@@ -211,6 +211,22 @@ namespace Sitecore.NSubstitute.UnitTests
         }
 
         [Theory, InlineAutoData("test field")]
+        public void FieldIndexerByFieldName_AfterGuidAdd_ReturnsAddedValue(string fieldName, Guid addedFieldValue, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, addedFieldValue);
+            Item item = fakeItem;
+
+            // Act
+            var actualFieldValue = item.Fields[fieldName].Value;
+
+            // Assert
+            actualFieldValue.Should().Be(addedFieldValue.ToString());
+        }
+
+        [Theory, InlineAutoData("test field")]
         public void FieldIndexerByFieldId_AfterGuidAdd_ReturnsAddedValue(string fieldName, Guid addedFieldValue, ID fieldId)
         {
             // Arrange
@@ -220,7 +236,7 @@ namespace Sitecore.NSubstitute.UnitTests
             Item item = fakeItem;
 
             // Act
-            var actualFieldValue = item[fieldId];
+            var actualFieldValue = item.Fields[fieldId].Value;
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue.ToString());
@@ -252,7 +268,7 @@ namespace Sitecore.NSubstitute.UnitTests
             Item item = fakeItem;
 
             // Act
-            var actualFieldValue = MainUtil.GetBool(item[fieldId], defaultValue: !addedFieldValue);
+            var actualFieldValue = MainUtil.GetBool(item.Fields[fieldName].Value, defaultValue: !addedFieldValue);
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue);
@@ -268,7 +284,7 @@ namespace Sitecore.NSubstitute.UnitTests
             Item item = fakeItem;
 
             // Act
-            var actualFieldValue = MainUtil.GetBool(item[fieldId], defaultValue: !addedFieldValue);
+            var actualFieldValue = MainUtil.GetBool(item.Fields[fieldId].Value, defaultValue: !addedFieldValue);
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue);
@@ -300,7 +316,7 @@ namespace Sitecore.NSubstitute.UnitTests
             Item item = fakeItem;
 
             // Act
-            var actualFieldValue = MainUtil.GetInt(item[fieldId], 0);
+            var actualFieldValue = MainUtil.GetInt(item.Fields[fieldName].Value, 0);
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue);
@@ -316,7 +332,7 @@ namespace Sitecore.NSubstitute.UnitTests
             Item item = fakeItem;
 
             // Act
-            var actualFieldValue = MainUtil.GetInt(item[fieldId], 0);
+            var actualFieldValue = MainUtil.GetInt(item.Fields[fieldId].Value, 0);
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue);
@@ -336,22 +352,6 @@ namespace Sitecore.NSubstitute.UnitTests
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue);
-        }
-
-        [Theory, InlineAutoData("test field")]
-        public void FieldIndexerByFieldName_AfterGuidAdd_ReturnsAddedValue(string fieldName, Guid addedFieldValue, ID fieldId)
-        {
-            // Arrange
-            var fakeItem = new FakeItem();
-
-            fakeItem.Add(fieldId, fieldName, addedFieldValue);
-            Item item = fakeItem;
-
-            // Act
-            var actualFieldValue = item[fieldName];
-
-            // Assert
-            actualFieldValue.Should().Be(addedFieldValue.ToString());
         }
 
         [Theory, InlineAutoData("test field", "test value")]
