@@ -223,7 +223,7 @@ namespace Sitecore.NSubstituteUtils
         /// <param name="name">The name of the field to be added.</param>
         /// <param name="value">The value of the field to be added.</param>
         /// <returns>Self to power builder-alike configuration.</returns>
-        public FakeItem WithField(ID id, string name, int value) => WithField(id, name, value.ToString());
+        public FakeItem WithField(ID id, string name, int value) => WithField(id, name, value.ToString(CultureInfo.InvariantCulture));
 
         /// <summary>
         /// Adds a field with given <paramref name="id"/>, <paramref name="name"/> and <paramref name="value"/> to the item.
