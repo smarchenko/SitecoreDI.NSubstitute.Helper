@@ -5,6 +5,7 @@ using FluentAssertions;
 using NSubstitute;
 using Sitecore.Collections;
 using Sitecore.Data;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Templates;
 using Sitecore.NSubstituteUtils;
@@ -304,6 +305,24 @@ namespace Sitecore.NSubstitute.UnitTests
 
             // Assert
             actualFieldValue.Should().Be(addedFieldValue);
+        }
+
+        [Theory]
+        [InlineAutoData("test field", true)]
+        [InlineAutoData("test field", false)]
+        public void Field_WhenCalled_InSyncWithCheckboxField(string fieldName, bool isChecked, ID fieldId)
+        {
+            // Arrange
+            var fakeItem = new FakeItem();
+
+            fakeItem.Add(fieldId, fieldName, isChecked);
+            Item item = fakeItem;
+            
+            // Act
+            var field = new CheckboxField(item.Fields[fieldId]);
+
+            // Assert
+            field.Checked.Should().Be(isChecked);            
         }
 
         [Theory, InlineAutoData("test field")]
