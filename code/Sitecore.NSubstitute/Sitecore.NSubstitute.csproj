@@ -6,7 +6,7 @@
     <RootNamespace>Sitecore.NSubstituteUtils</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NSubstitute" Version="1.9.2" />
+    <PackageReference Include="NSubstitute" Version="4.2.1" />
     <PackageReference Include="Sitecore.Kernel.NoReferences" Version="8.2.160729" />
   </ItemGroup>  
 </Project>
