@@ -25,7 +25,7 @@
   <target name="compile">
     <property name="compile.configuration" value="Release"/>
     <property name="compile.target" value="Build"/>
-    <property name="compile.msbuild.exe" value="C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe"/>
+    <property name="compile.msbuild.exe" value="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\MSBuild.exe"/>
     <property name="compile.command.line" value='"${global.paths.code}\Sitecore.NSubstitute.sln" /t:${compile.target} /p:Configuration=${compile.configuration}'/>
     
     <exec program="${compile.msbuild.exe}" commandline="${compile.command.line}"/>
