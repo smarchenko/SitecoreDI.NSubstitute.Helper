@@ -1,14 +1,21 @@
 ﻿using Sitecore.Data;
+using Sitecore.NSubstituteUtils.Extensions;
+using Sitecore.Sites;
+using Sitecore.Web;
 using StringDictionary = Sitecore.Collections.StringDictionary;
 
 namespace Sitecore.NSubstituteUtils
 {
     public class SiteInfoPropertiesBuilder
     {
-        public SiteInfoPropertiesBuilder()
+        public SiteInfoPropertiesBuilder() : this(new ShortID().ToString())
+        {
+        }
+
+        public SiteInfoPropertiesBuilder(string siteName)
         {
             SiteInfoProperties = new StringDictionary();
-            WithSiteName(new ShortID().ToString());
+            WithSiteName(siteName);
         }
 
         protected StringDictionary SiteInfoProperties { get; }
@@ -178,9 +185,20 @@ namespace Sitecore.NSubstituteUtils
             return this;
         }
 
-        public StringDictionary ToSitecoreSiteInfoProperties()
+        public StringDictionary ToSitecoreSiteInfoProperties(bool returnCopy = false)
         {
-            return SiteInfoProperties;
+            if (!returnCopy)
+            {
+                return SiteInfoProperties;
+            }
+
+            return new StringDictionary(SiteInfoProperties.Clone());
         }
+
+        public static implicit operator SiteInfo(SiteInfoPropertiesBuilder builder) => builder.ToSiteInfo();
+
+        public static implicit operator Site(SiteInfoPropertiesBuilder builder) => builder.ToSite();
+
+        public static implicit operator SiteContext(SiteInfoPropertiesBuilder builder) => builder.ToSiteContext();
     }
 }

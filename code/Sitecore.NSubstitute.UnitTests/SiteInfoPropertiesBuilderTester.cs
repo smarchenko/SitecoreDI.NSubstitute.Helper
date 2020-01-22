@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Sitecore.Data;
 using Sitecore.NSubstituteUtils;
 using Xunit;
@@ -11,6 +12,40 @@ namespace Sitecore.NSubstitute.UnitTests
         public void EmptySiteInfoProperties_CanBeCreated()
         {
             new SiteInfoPropertiesBuilder().ToSitecoreSiteInfoProperties().Should().NotBeNull();
+        }
+
+        [Fact]
+        public void EmptySiteInfoProperties_CanBeCreatedWithSpecifiedName()
+        {
+            string siteName = Guid.NewGuid().ToString();
+            var properties = new SiteInfoPropertiesBuilder(siteName).ToSitecoreSiteInfoProperties();
+
+            properties[NSubstituteUtils.Constants.SiteProperties.SiteName].Should().Be(siteName);
+        }
+
+        [Fact]
+        public void ToSitecoreSiteInfoProperties_ReturnsCopyWhenAsked()
+        {
+            string siteName = Guid.NewGuid().ToString();
+            string newSiteName = Guid.NewGuid().ToString();
+            var builder = new SiteInfoPropertiesBuilder(siteName);
+            var properties = builder.ToSitecoreSiteInfoProperties(true);
+            var newProperties = builder.WithSiteName(newSiteName).ToSitecoreSiteInfoProperties();
+
+            properties[NSubstituteUtils.Constants.SiteProperties.SiteName].Should().Be(siteName);
+            newProperties[NSubstituteUtils.Constants.SiteProperties.SiteName].Should().Be(newSiteName);
+        }
+
+        [Fact]
+        public void ToSitecoreSiteInfoProperties_ReturnsInnerCollectionByDefault()
+        {
+            string siteName = Guid.NewGuid().ToString();
+            string newSiteName = Guid.NewGuid().ToString();
+            var builder = new SiteInfoPropertiesBuilder(siteName);
+            var properties = builder.ToSitecoreSiteInfoProperties();
+            builder.WithSiteName(newSiteName);
+
+            properties[NSubstituteUtils.Constants.SiteProperties.SiteName].Should().Be(newSiteName);
         }
 
         [Fact]
