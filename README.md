@@ -56,6 +56,22 @@ Example:
 
 More examples your can find [here](https://github.com/smarchenko/SitecoreDI.NSubstitute.Helper/blob/master/code/Sitecore.NSubstitute.UnitTests/FakeItemTester.cs)
 
+## Creating SiteContext
+Starting from version 2.0.2 you can use `SiteInfoPropertiesBuilder` to create site properties and later on cast to one of the Sitecore types, like `SiteInfo`, `Site`, `SiteContext`:
+```C#
+        [Test]
+        public void CreatingSiteContext_ShouldBeTrivial()
+        {
+            SiteContext siteContext = new SiteInfoPropertiesBuilder("TestSiteName")
+                .WithHostName("test-site-host")
+                .WithDatabase("test-database")
+                .WithStartItem("/test/start/items");
+
+            siteContext.StartItem.Should().Be("/test/start/items");
+        }
+```
+
+
 ## Simple substitutes
 FakeUtil class has a number of simple methods that show how to fake some Sitecore classes or parts of the Item class. This class has been created just for demo purpose. I would recommend to use FakeItem class in your test projects since it is much more powerful one and simplifies creation of item structures. 
 
